@@ -1,0 +1,320 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-orange: #cefe46; /* Neon Yellow accent */
+  --color-brand-black: #121212;  /* Off Black */
+  --color-brand-white: #ffffff;  /* Pure White */
+  --color-brand-offwhite: #ececec; /* Off White */
+  --color-brand-charcoal: #202020; /* Charcoal */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --animate-pulse-fast: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+  /* Map standard colors to the new palette to cleanly update the design */
+  --color-black: #121212;
+  --color-zinc-950: #121212;
+  --color-zinc-900: #202020;
+  --color-zinc-800: #2c2c2c;
+  --color-zinc-700: #3a3a3a;
+  --color-zinc-500: #a3a3a3;
+  --color-zinc-400: #ececec;
+}
+
+/* Smooth in-page anchor navigation (the reduced-motion override below forces
+   this back to auto for users who request reduced motion). */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #121212; /* Off Black */
+  color: #ffffff;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  cursor: none; /* Hide default cursor to use custom magnetic cursor */
+}
+
+/* Custom selection styling */
+::selection {
+  background-color: #cefe46; /* Neon Yellow */
+  color: #121212; /* Off Black */
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #121212;
+  border-left: 1px solid #2c2c2c;
+}
+::-webkit-scrollbar-thumb {
+  background: #52525b; /* zinc-600 */
+  border-radius: 0;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #cefe46; /* Neon Yellow */
+}
+
+/* Text vibration for critical scanning state */
+.vibrate-text {
+  animation: text-vibrate 0.15s linear infinite alternate;
+}
+
+@keyframes text-vibrate {
+  0% {
+    text-shadow: 1.5px 1.5px 0px rgba(206, 254, 70, 0.6), -1.5px -1.5px 0px rgba(0, 255, 255, 0.4);
+    transform: translate(0.5px, 0.5px);
+  }
+  100% {
+    text-shadow: -1.5px -1.5px 0px rgba(206, 254, 70, 0.6), 1.5px 1.5px 0px rgba(0, 255, 255, 0.4);
+    transform: translate(-0.5px, -0.5px);
+  }
+}
+
+
+/* Custom typography styles */
+.text-stroke-white {
+  -webkit-text-stroke: 1px #ffffff;
+  color: transparent;
+}
+
+.text-stroke-orange {
+  -webkit-text-stroke: 1px #cefe46;
+  color: transparent;
+}
+
+/* Interactive typography transitions */
+.interactive-title {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), letter-spacing 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.interactive-title:hover {
+  transform: skewX(-5deg);
+  letter-spacing: 0.05em;
+}
+
+/* Infinite Marquee */
+.marquee-container {
+  display: flex;
+  overflow: hidden;
+  user-select: none;
+  width: 100%;
+}
+
+.marquee-content {
+  display: flex;
+  flex-shrink: 0;
+  min-width: 100%;
+  white-space: nowrap;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+/* Scan line overlay animation inside webcam feed */
+@keyframes scan {
+  0% {
+    top: 0%;
+  }
+  50% {
+    top: 100%;
+  }
+  100% {
+    top: 0%;
+  }
+}
+
+/* Custom Cursor default state (hidden on mobile) */
+@media (max-width: 768px) {
+  body {
+    cursor: auto;
+  }
+}
+
+/* Technical Grid Background Overlay */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-image: 
+    linear-gradient(to right, rgba(39, 39, 42, 0.15) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(39, 39, 42, 0.15) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* CRT Scanlines Overlay when Glitching */
+.bg-scanlines {
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  animation: scanlines-shift 20s linear infinite;
+}
+
+@keyframes scanlines-shift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 100%;
+  }
+}
+
+/* Organic Film Grain Overlay */
+.film-grain-container {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.85;
+}
+
+.film-grain-container::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  right: -50%;
+  bottom: -50%;
+  width: 200%;
+  height: 200%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  animation: grain-animation 0.7s steps(6) infinite;
+}
+
+@keyframes grain-animation {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-2%, -1%); }
+  20% { transform: translate(-3%, 2%); }
+  30% { transform: translate(2%, -3%); }
+  40% { transform: translate(-2%, 4%); }
+  50% { transform: translate(-3%, 2%); }
+  60% { transform: translate(4%, -2%); }
+  70% { transform: translate(3%, 2%); }
+  80% { transform: translate(-4%, -3%); }
+  90% { transform: translate(2%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Tech-Bro Biometric Radar Pulse Glow */
+.radar-pulse-glow {
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(206, 254, 70, 0.15) 0%, transparent 70%);
+  filter: blur(10px);
+  pointer-events: none;
+  z-index: -10;
+  animation: radar-glow-pulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes radar-glow-pulse {
+  0% {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  100% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Spaceship HUD scanner scanlines */
+.scanner-crt::before {
+  content: " ";
+  display: block;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.05), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.05));
+  z-index: 10;
+  background-size: 100% 3px, 6px 100%;
+  pointer-events: none;
+}
+
+/* Animated scan line used by the live camera preview in the EnvyMeter widget */
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(2000%); }
+}
+
+/* ─── Accessibility: respect reduced-motion preferences ────────────────────────
+   Users who request reduced motion get a calm, fully-functional experience:
+   marquees hold still, the CRT glitch loop is disabled, and all transition
+   durations collapse to near-zero. The envy algorithm and biometric readouts
+   keep working — only the gratuitous animation is suppressed. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .marquee-content,
+  .radar-pulse-glow,
+  .glitch-flash,
+  .film-grain,
+  .bg-scanlines {
+    animation: none !important;
+  }
+}
+
+/* ─── Refined CRT glitch (envy ≥ 8.0) ─────────────────────────────────────────
+   A layered chromatic-aberration + jitter flash, more filmic than the plain
+   background swap. Triggers via the existing .glitch-flash class. */
+.glitch-flash {
+  animation: glitch-flash-anim 0.18s steps(2) infinite;
+  background-color: #121212 !important;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(206, 254, 70, 0.06) 0px, transparent 1px, transparent 2px),
+    repeating-linear-gradient(90deg, rgba(0, 255, 200, 0.04) 0px, transparent 2px, transparent 4px);
+}
+@keyframes glitch-flash-anim {
+  0% {
+    text-shadow: 2px 0 rgba(206, 254, 70, 0.8), -2px 0 rgba(0, 255, 200, 0.8);
+  }
+  25% {
+    text-shadow: -3px 0 rgba(206, 254, 70, 0.8), 3px 0 rgba(0, 255, 200, 0.8);
+  }
+  50% {
+    text-shadow: 1px 1px rgba(206, 254, 70, 0.8), -1px -1px rgba(0, 255, 200, 0.8);
+  }
+  75% {
+    text-shadow: -2px 0 rgba(206, 254, 70, 0.8), 2px 0 rgba(0, 255, 200, 0.8);
+  }
+  100% {
+    text-shadow: 2px 0 rgba(206, 254, 70, 0.8), -2px 0 rgba(0, 255, 200, 0.8);
+  }
+}
+
+/* Focus-visible ring for keyboard users — the custom cursor hides the default,
+   so we provide a crisp, accessible focus indicator for tab navigation. */
+:focus-visible {
+  outline: 2px solid #cefe46;
+  outline-offset: 2px;
+}
+
+/* Smoother font rendering for the heavy display type */
+@media (min-resolution: 1.5dppx) {
+  body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
