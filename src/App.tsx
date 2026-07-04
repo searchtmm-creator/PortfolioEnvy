@@ -406,17 +406,41 @@ const AWARDS_DATA: Festival[] = [
     ],
   },
   {
-    name: 'Effie Awards Peru',
-    location: 'PERU',
+    name: 'Clio Awards',
+    location: 'USA',
     entries: [
-      { year: '2026', result: 'Silver — Extensión de Línea / Win Tv', tier: 'silver' },
-      { year: '2026', result: 'Silver — Éxito Sostenido / Win', tier: 'silver' },
-      { year: '2026', result: 'Bronze — David y Goliat / Win Tv', tier: 'bronze' },
-      { year: '2026', result: 'Bronze — Promoción de Servicios / Win - Exorcista', tier: 'bronze' },
-      { year: '2026', result: 'Silver — Marketing Estacional / Win - Exorcista', tier: 'silver' },
-      { year: '2026', result: 'Silver — Internet y Telecomunicaciones / Win - Exorcista', tier: 'silver' },
-      { year: '2026', result: 'Shortlist — Innovación en el negocio / Marsella - Nadie huele como tú', tier: 'shortlist' },
+      { year: '2020', result: 'Clio Sports Silver — Direct / The Cheering Trophy', tier: 'silver' },
+      { year: '2020', result: 'Clio Sports Bronze — Experiential/Events / The Cheering Trophy', tier: 'bronze' },
+      { year: '2020', result: 'Clio Sports Bronze — Public Relations / The Cheering Trophy', tier: 'bronze' },
     ],
+  },
+  {
+    name: 'LIA Awards',
+    location: 'USA',
+    entries: [{ year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' }],
+  },
+  {
+    name: 'One Show',
+    location: 'USA',
+    entries: [{ year: '2020', result: 'Merit — Innovation in Radio & Audio / The Cheering Trophy', tier: 'mention' }],
+  },
+  {
+    name: 'Lürzer’s Archive',
+    location: 'GERMANY',
+    entries: [
+      { year: '2024', result: 'Magazine 03.268 / KFC Sun Stats', tier: 'feature' },
+      { year: '2024', result: 'Magazine 40th Anniversary / KFC Open Late', tier: 'feature' },
+    ],
+  },
+  {
+    name: 'Adweek Project Isaac',
+    location: 'USA',
+    entries: [{ year: '2017', result: 'Gold — HR Invention / No Gender Profile', tier: 'gold' }],
+  },
+  {
+    name: 'CAC',
+    location: 'ECUADOR',
+    entries: [{ year: '2020', result: 'Expo — Contemporary Art Center of Quito', tier: 'feature' }],
   },
   {
     name: 'Ojo de Iberoamérica',
@@ -441,32 +465,30 @@ const AWARDS_DATA: Festival[] = [
     ],
   },
   {
-    name: 'Clio Awards',
-    location: 'USA',
+    name: 'Sol',
+    location: 'LATAM',
+    entries: [{ year: '2019', result: 'Shortlist — Uso Innovador de Audio / The Cheering Trophy', tier: 'shortlist' }],
+  },
+  {
+    name: 'FIAP',
+    location: 'LATAM',
     entries: [
-      { year: '2020', result: 'Clio Sports Silver — Direct / The Cheering Trophy', tier: 'silver' },
-      { year: '2020', result: 'Clio Sports Bronze — Experiential/Events / The Cheering Trophy', tier: 'bronze' },
-      { year: '2020', result: 'Clio Sports Bronze — Public Relations / The Cheering Trophy', tier: 'bronze' },
+      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
+      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
+      { year: '2016', result: 'Shortlist — Innovación en Redes Sociales / Missing Tag', tier: 'shortlist' },
     ],
   },
   {
-    name: 'Cóndor',
-    location: 'ECUADOR',
+    name: 'Festival of Media',
+    location: 'GLOBAL',
+    entries: [{ year: '2016', result: 'Gold — Best Social Media Campaign / Missing Tag', tier: 'gold' }],
+  },
+  {
+    name: 'WINA',
+    location: 'GLOBAL',
     entries: [
-      { year: '2024', result: 'Bronze — Craft Photo / Open Late', tier: 'bronze' },
-      { year: '2024', result: 'Shortlist — Radio / Lo Fried Beats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Print and Publishing / Open Late', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Digital Craft / Nuggets Sound Test', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Craft Audio / Nuggets Sound Test', tier: 'shortlist' },
-      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
-      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
-      { year: '2023', result: 'Silver — PR / Paranormal Activity', tier: 'silver' },
-      { year: '2023', result: 'Bronze — Digital / Paranormal Activity', tier: 'bronze' },
-      { year: '2023', result: 'Bronze — Craft / Fried on the map', tier: 'bronze' },
-      { year: '2023', result: 'Shortlist — Craft / Fried on the map', tier: 'shortlist' },
-      { year: '2023', result: 'Shortlist — Craft / Paranormal Icetivity', tier: 'shortlist' },
-      { year: '2018', result: 'Silver — Print and Publishing / Terrified Posters', tier: 'silver' },
-      { year: '2018', result: 'Bronze — Craft / Terrified Posters', tier: 'bronze' },
+      { year: '2021', result: 'Bronze — Print / Kids', tier: 'bronze' },
+      { year: '2021', result: 'Honorable Mention — Print / Reflections', tier: 'mention' },
     ],
   },
   {
@@ -485,104 +507,11 @@ const AWARDS_DATA: Festival[] = [
     ],
   },
   {
-    name: 'FIAP',
-    location: 'LATAM',
-    entries: [
-      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
-      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
-      { year: '2016', result: 'Shortlist — Innovación en Redes Sociales / Missing Tag', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Lürzer’s Archive',
-    location: 'GERMANY',
-    entries: [
-      { year: '2024', result: 'Magazine 03.268 / KFC Sun Stats', tier: 'feature' },
-      { year: '2024', result: 'Magazine 40th Anniversary / KFC Open Late', tier: 'feature' },
-    ],
-  },
-  {
-    name: 'WINA',
-    location: 'GLOBAL',
-    entries: [
-      { year: '2021', result: 'Bronze — Print / Kids', tier: 'bronze' },
-      { year: '2021', result: 'Honorable Mention — Print / Reflections', tier: 'mention' },
-    ],
-  },
-  {
-    name: 'LIA Awards',
-    location: 'USA',
-    entries: [{ year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' }],
-  },
-  {
-    name: 'One Show',
-    location: 'USA',
-    entries: [{ year: '2020', result: 'Merit — Innovation in Radio & Audio / The Cheering Trophy', tier: 'mention' }],
-  },
-  {
-    name: 'Festival of Media',
-    location: 'GLOBAL',
-    entries: [{ year: '2016', result: 'Gold — Best Social Media Campaign / Missing Tag', tier: 'gold' }],
-  },
-  {
-    name: 'Adweek Project Isaac',
-    location: 'USA',
-    entries: [{ year: '2017', result: 'Gold — HR Invention / No Gender Profile', tier: 'gold' }],
-  },
-  {
     name: 'IAB',
     location: 'LATAM',
     entries: [
       { year: '2017', result: 'Bronze — Uso Nativo del medio / No Gender Profile', tier: 'bronze' },
       { year: '2016', result: 'Silver — Campaign on Social Networks / Missing Tag', tier: 'silver' },
-    ],
-  },
-  {
-    name: 'Sol',
-    location: 'LATAM',
-    entries: [{ year: '2019', result: 'Shortlist — Uso Innovador de Audio / The Cheering Trophy', tier: 'shortlist' }],
-  },
-  {
-    name: 'LUX',
-    location: 'ECUADOR',
-    entries: [
-      { year: '2019', result: 'Silver — Direct / The Cheering Trophy', tier: 'silver' },
-      { year: '2019', result: 'Bronze — The Cheering Trophy', tier: 'bronze' },
-      { year: '2019', result: 'Shortlist — Craft music / Discover extralike', tier: 'shortlist' },
-      { year: '2018', result: 'Shortlist — Outdoor / Terrified Posters', tier: 'shortlist' },
-      { year: '2018', result: 'Shortlist — Print Craft / Terrified Posters', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Diente',
-    location: 'ARGENTINA',
-    entries: [
-      { year: '2018', result: 'Honorable Mention — Design / Selfish box', tier: 'mention' },
-      { year: '2017', result: 'Bronze — Promo and Activation & PR / No Gender Profile', tier: 'bronze' },
-      { year: '2017', result: 'Honorable Mention — Interactive / No Gender Profile', tier: 'mention' },
-    ],
-  },
-  {
-    name: 'APAP',
-    location: 'PERU',
-    entries: [{ year: '2025', result: 'Bronze — Film', tier: 'bronze' }],
-  },
-  {
-    name: 'CAC',
-    location: 'ECUADOR',
-    entries: [{ year: '2020', result: 'Expo — Contemporary Art Center of Quito', tier: 'feature' }],
-  },
-  {
-    name: 'Punto 99 Awards',
-    location: 'ECUADOR',
-    entries: [{ year: '2023', result: 'Best Creative', tier: 'gold' }],
-  },
-  {
-    name: 'BenditaCarpeta',
-    location: 'LATAM',
-    entries: [
-      { year: '2017', result: 'Tercer Lugar del Mundial Creativo', tier: 'bronze' },
-      { year: '2016', result: 'Dupla ganadora del Mundial Creativo', tier: 'gold' },
     ],
   },
   {
@@ -606,6 +535,77 @@ const AWARDS_DATA: Festival[] = [
       { year: '2023', result: 'Jury', tier: 'jury' },
       { year: '2022', result: 'Jury', tier: 'jury' },
       { year: '2021', result: 'Jury', tier: 'jury' },
+    ],
+  },
+  {
+    name: 'Diente',
+    location: 'ARGENTINA',
+    entries: [
+      { year: '2018', result: 'Honorable Mention — Design / Selfish box', tier: 'mention' },
+      { year: '2017', result: 'Bronze — Promo and Activation & PR / No Gender Profile', tier: 'bronze' },
+      { year: '2017', result: 'Honorable Mention — Interactive / No Gender Profile', tier: 'mention' },
+    ],
+  },
+  {
+    name: 'APAP',
+    location: 'PERU',
+    entries: [{ year: '2025', result: 'Bronze — Film', tier: 'bronze' }],
+  },
+  {
+    name: 'Effie Awards Peru',
+    location: 'PERU',
+    entries: [
+      { year: '2026', result: 'Silver — Extensión de Línea / Win Tv', tier: 'silver' },
+      { year: '2026', result: 'Silver — Éxito Sostenido / Win', tier: 'silver' },
+      { year: '2026', result: 'Bronze — David y Goliat / Win Tv', tier: 'bronze' },
+      { year: '2026', result: 'Bronze — Promoción de Servicios / Win - Exorcista', tier: 'bronze' },
+      { year: '2026', result: 'Silver — Marketing Estacional / Win - Exorcista', tier: 'silver' },
+      { year: '2026', result: 'Silver — Internet y Telecomunicaciones / Win - Exorcista', tier: 'silver' },
+      { year: '2026', result: 'Shortlist — Innovación en el negocio / Marsella - Nadie huele como tú', tier: 'shortlist' },
+    ],
+  },
+  {
+    name: 'Cóndor',
+    location: 'ECUADOR',
+    entries: [
+      { year: '2024', result: 'Bronze — Craft Photo / Open Late', tier: 'bronze' },
+      { year: '2024', result: 'Shortlist — Radio / Lo Fried Beats', tier: 'shortlist' },
+      { year: '2024', result: 'Shortlist — Print and Publishing / Open Late', tier: 'shortlist' },
+      { year: '2024', result: 'Shortlist — Digital Craft / Nuggets Sound Test', tier: 'shortlist' },
+      { year: '2024', result: 'Shortlist — Craft Audio / Nuggets Sound Test', tier: 'shortlist' },
+      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
+      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
+      { year: '2023', result: 'Silver — PR / Paranormal Activity', tier: 'silver' },
+      { year: '2023', result: 'Bronze — Digital / Paranormal Activity', tier: 'bronze' },
+      { year: '2023', result: 'Bronze — Craft / Fried on the map', tier: 'bronze' },
+      { year: '2023', result: 'Shortlist — Craft / Fried on the map', tier: 'shortlist' },
+      { year: '2023', result: 'Shortlist — Craft / Paranormal Icetivity', tier: 'shortlist' },
+      { year: '2018', result: 'Silver — Print and Publishing / Terrified Posters', tier: 'silver' },
+      { year: '2018', result: 'Bronze — Craft / Terrified Posters', tier: 'bronze' },
+    ],
+  },
+  {
+    name: 'LUX',
+    location: 'ECUADOR',
+    entries: [
+      { year: '2019', result: 'Silver — Direct / The Cheering Trophy', tier: 'silver' },
+      { year: '2019', result: 'Bronze — The Cheering Trophy', tier: 'bronze' },
+      { year: '2019', result: 'Shortlist — Craft music / Discover extralike', tier: 'shortlist' },
+      { year: '2018', result: 'Shortlist — Outdoor / Terrified Posters', tier: 'shortlist' },
+      { year: '2018', result: 'Shortlist — Print Craft / Terrified Posters', tier: 'shortlist' },
+    ],
+  },
+  {
+    name: 'Punto 99 Awards',
+    location: 'ECUADOR',
+    entries: [{ year: '2023', result: 'Best Creative', tier: 'gold' }],
+  },
+  {
+    name: 'BenditaCarpeta',
+    location: 'LATAM',
+    entries: [
+      { year: '2017', result: 'Tercer Lugar del Mundial Creativo', tier: 'bronze' },
+      { year: '2016', result: 'Dupla ganadora del Mundial Creativo', tier: 'gold' },
     ],
   },
 ];
@@ -718,7 +718,7 @@ const EXPERIENCES = [
   {
     role: 'Creative Director',
     company: 'Lemon The Agency',
-    period: '2019 - 2022',
+    period: '2025',
     location: 'Lima - Peru',
   },
   {
