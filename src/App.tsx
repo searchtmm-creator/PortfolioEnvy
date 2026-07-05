@@ -1961,7 +1961,7 @@ function App() {
             transition={{ duration: 0.8 }}
             className="max-w-3xl text-zinc-400 font-mono text-xs md:text-sm leading-relaxed mb-16 border-l-2 border-brand-orange pl-6 select-none"
           >
-            Here’s the thing: there are a bunch of us creatives who don’t really care about awards or recognition. I’ve got over 80 of those “I don’t care about” awards, and I made sure to write them down with the date, celebrate them by dancing, post about them on all my socials… and even called my mom excited to tell her I won.
+            Here’s the thing: there are a bunch of us creatives who don’t really care about awards or recognition. I’ve got over 90 of those “I don’t care about” awards, and I made sure to write them down with the date, celebrate them by dancing, post about them on all my socials… and even called my mom excited to tell her I won.
           </motion.div>
 
           {/* Awards — collapsible accordions grouped by festival */}
