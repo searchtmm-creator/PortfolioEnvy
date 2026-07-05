@@ -1867,7 +1867,7 @@ function App() {
             </div>
 
             <div className="pt-8 border-t border-zinc-900 mt-12 font-mono text-xs text-zinc-500">
-              [ STATUS: READY TO HIRE • LOCATION: BOG / MIA / GLOBAL ]
+              [ STATUS: READY TO HIRE • LOCATION: CDMX / LATAM / GLOBAL ]
             </div>
           </motion.div>
 
