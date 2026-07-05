@@ -75,6 +75,7 @@ import muvid2 from './assets/muvid/muvid2.jpg';
 
 // Import Floating logo
 import logo from './assets/logoSA.svg';
+import searchImage from './assets/search.jpg';
 import { EnvyEngine } from './services/EnvyEngine';
 
 // Lazy load the EnvyMeterWidget to defer loading of MediaPipe models and WASM
@@ -875,6 +876,7 @@ function App() {
   const [isScannerActive, setIsScannerActive] = useState(false);
   const [isWidgetInfoOpen, setIsWidgetInfoOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [showSearchWidget, setShowSearchWidget] = useState(true);
   
   // Parallax Scroll Tracking
   const { scrollY } = useScroll();
@@ -1470,7 +1472,7 @@ function App() {
               </button>
             </div>
             <div className="font-mono text-xs font-bold tracking-widest md:pl-12">
-              S_A // CD.01
+              [ Sergio Alzate ]
             </div>
           </div>
           
@@ -1666,7 +1668,7 @@ function App() {
       </section>
 
       {/* SECTION 2: WORK (12 Projects Asymmetrical Grid) */}
-      <section id="work" className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:px-12 relative`}>
+      <section id="work" className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:pl-28 md:pr-12 relative`}>
         <Crosshair className="top-0 left-0" />
         <Crosshair className="top-0 right-0" />
         
@@ -1782,7 +1784,7 @@ function App() {
       {/* SECTION 3: ABOUT (System Status Resume) */}
       <section 
         id="about" 
-        className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:px-12 relative w-full bg-black`}
+        className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:pl-28 md:pr-12 relative w-full bg-black`}
       >
         <Crosshair className="top-0 left-0" />
         <Crosshair className="top-0 right-0" />
@@ -1801,7 +1803,56 @@ function App() {
                 <User className="w-4 h-4" />
                 // BIOGRAPHY
               </div>
+              
+              {/* Neobrutalist Biography Image Widget */}
+              {showSearchWidget && (
+                <div className="border-2 border-brand-orange bg-zinc-950 p-2 shadow-[6px_6px_0px_rgba(206,254,70,0.8)] relative group select-none mb-8 w-full max-w-[280px] animate-[fadeIn_0.3s_ease-out]">
+                  {/* Corner highlights */}
+                  <div className="absolute top-[-2px] left-[-2px] w-2 h-2 bg-brand-orange" />
+                  <div className="absolute top-[-2px] right-[-2px] w-2 h-2 bg-brand-orange" />
+                  <div className="absolute bottom-[-2px] left-[-2px] w-2 h-2 bg-brand-orange" />
+                  <div className="absolute bottom-[-2px] right-[-2px] w-2 h-2 bg-brand-orange" />
+                  
+                  {/* HUD Header tag */}
+                  <div className="flex justify-between items-center text-[8px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 border-b border-zinc-900 pb-1">
+                    <span>ID: SERGIO_ALZATE</span>
+                    <button 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        playSound('click', isMuted);
+                        setShowSearchWidget(false);
+                      }}
+                      className="text-zinc-500 hover:text-brand-orange font-bold text-[10px] cursor-pointer px-1 transition-colors"
+                      title="Close"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                  
+                  {/* Image Container with Scanlines Overlay */}
+                  <div className="relative overflow-hidden bg-black flex items-center justify-center border border-zinc-900 aspect-[3/4]">
+                    {/* Subtle Scanlines */}
+                    <div className="absolute inset-0 bg-scanlines opacity-10 pointer-events-none z-10" />
+                    
+                    <img 
+                      src={searchImage} 
+                      alt="Sergio Alzate Biography" 
+                      className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
+                    />
+                    
+                    {/* HUD overlay labels */}
+                    <div className="absolute bottom-2 left-2 z-20 font-mono text-[7px] text-brand-orange bg-black/80 px-1 py-0.5 border border-brand-orange/30">
+                      LATAM_GEO: CDMX
+                    </div>
+                    <div className="absolute top-2 right-2 z-20 font-mono text-[7px] text-zinc-400 bg-black/80 px-1 py-0.5 border border-zinc-800">
+                      REC: 1080P
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <ScrollBiography />
+
               <div className="font-mono text-xs leading-relaxed text-zinc-400 space-y-4 mb-8 border-l border-zinc-800 pl-4">
                 <p>
                   I studied visual arts and a few things related to communication, literature and technology. I've been fortunate to work in several Latin American countries like Argentina, Brazil, Chile, Ecuador, Peru and now Mexico.
@@ -1886,7 +1937,7 @@ function App() {
         <Crosshair className="top-0 left-0" />
         <Crosshair className="top-0 right-0" />
 
-        <div className="max-w-7xl mx-auto px-6 md:px-12 mb-20">
+        <div className="max-w-7xl mx-auto px-6 md:pl-28 md:pr-12 mb-20">
           <div className="flex items-center gap-2 text-brand-orange mb-4 font-mono text-xs uppercase tracking-widest font-bold">
             <Award className="w-4 h-4" />
             // RECOGNITION DECK
