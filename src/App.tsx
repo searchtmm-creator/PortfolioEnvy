@@ -2194,16 +2194,6 @@ function App() {
                 {selectedProject.id === 18 || selectedProject.slug === 'dino-on-negocios' ? (
                   /* Custom Layout for Dino Project */
                   <div className="flex flex-col">
-                    {/* Dino Portada */}
-                    {selectedProject.images?.[0] && (
-                      <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[0]} 
-                          alt="Dino cover" 
-                          className="w-full h-auto object-cover" 
-                        />
-                      </div>
-                    )}
 
                     {/* Dino 1.png */}
                     {selectedProject.images?.[1] && (
@@ -2321,16 +2311,6 @@ function App() {
                 ) : selectedProject.id === 1 || selectedProject.slug === 'wintv' ? (
                   /* Custom Layout for win tv Project */
                   <div className="flex flex-col">
-                    {/* Wintv Portada */}
-                    {selectedProject.images?.[0] && (
-                      <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[0]} 
-                          alt="WinTV cover" 
-                          className="w-full h-auto object-cover" 
-                        />
-                      </div>
-                    )}
 
                     {/* Row 1: wintv_1.png */}
                     {selectedProject.images?.[1] && (
