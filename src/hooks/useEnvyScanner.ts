@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { EnvyEngine, type NormalizedLandmark, type EnvyComponents } from '../services/EnvyEngine';
+import type { NormalizedLandmark, EnvyComponents } from '../services/EnvyEngine';
+import { getLoadedEngine, loadEngine } from '../services/scannerLoader';
 
 export interface UseEnvyScannerReturn {
   stream: MediaStream | null;
@@ -19,7 +20,7 @@ export interface UseEnvyScannerReturn {
   stopScanner: () => void;
 }
 
-export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn {
+export function useEnvyScanner(projectId?: number | null, sensitivity = 4): UseEnvyScannerReturn {
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [envyScore, setEnvyScore] = useState<number | null>(null);
   const [landmarks, setLandmarks] = useState<NormalizedLandmark[] | null>(null);
@@ -34,6 +35,10 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
   const [isCameraActive, setIsCameraActive] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
+  const streamRef = useRef<MediaStream | null>(null);
+  const requestVersion = useRef(0);
+  const starting = useRef(false);
+
   const activeLoopRef = useRef<number | null>(null);
   const lastProcessedTimeRef = useRef<number>(0);
   const videoElementRef = useRef<HTMLVideoElement | null>(null);
@@ -45,21 +50,26 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
     const frameId = requestAnimationFrame(() => {
       setEnvyScore(null);
     });
-    EnvyEngine.getInstance().reset();
+    getLoadedEngine()?.reset();
     return () => cancelAnimationFrame(frameId);
   }, [projectId]);
 
   // Stop camera tracks safely and clean up state
   const stopScanner = useCallback(() => {
+    requestVersion.current += 1;
+    starting.current = false;
+    setIsLoadingModel(false);
+    setModelProgress('');
     if (activeLoopRef.current) {
       cancelAnimationFrame(activeLoopRef.current);
       activeLoopRef.current = null;
     }
 
-    if (stream) {
-      stream.getTracks().forEach((track) => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => {
         track.stop();
       });
+      streamRef.current = null;
       setStream(null);
     }
 
@@ -78,22 +88,29 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
     setIsCalibrated(false);
     setCalibrationProgress(0);
     sessionPeakRef.current = null;
-    EnvyEngine.getInstance().reset();
-  }, [stream]);
+    getLoadedEngine()?.reset();
+  }, []);
 
   // Start model initialization and camera stream
   const startScanner = useCallback(async () => {
+    if (starting.current || streamRef.current) return;
+    starting.current = true;
+    const version = ++requestVersion.current;
     setIsLoadingModel(true);
     setError(null);
     setModelProgress('Awakening bio-sensors...');
 
     try {
       // 1. Initialize Envy Engine (Loads WASM on-demand)
-      const engine = EnvyEngine.getInstance();
+      const engine = await loadEngine();
+      if (version !== requestVersion.current) return;
+      engine.setSensitivity(sensitivity);
       await engine.initialize((progress) => {
-        setModelProgress(progress);
+        if (version === requestVersion.current) setModelProgress(progress);
       });
 
+      if (version !== requestVersion.current) return;
+      if (!navigator.mediaDevices?.getUserMedia) throw new Error('Camera access is unavailable. Use a browser with camera support over HTTPS.');
       // 2. Request user camera access
       setModelProgress('Accessing camera peripheral...');
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -105,12 +122,21 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
         audio: false,
       });
 
+      if (version !== requestVersion.current || document.hidden) {
+        mediaStream.getTracks().forEach(track => track.stop());
+        return;
+      }
+      streamRef.current = mediaStream;
       setStream(mediaStream);
       setIsCameraActive(true);
     } catch (e: unknown) {
-      console.error('Failed to start scanner:', e);
+      if (version !== requestVersion.current) return;
       const err = e as Error;
-      setError(err.message || 'Access to camera denied or hardware not found.');
+      const message = err.name === 'NotAllowedError' ? 'Camera permission was denied. Allow camera access in your browser to retry.'
+        : err.name === 'NotFoundError' ? 'No camera was found. Connect a camera and retry.'
+        : err.name === 'NotReadableError' ? 'The camera is unavailable or in use by another application.'
+        : 'The scanner could not start. Check your connection and camera settings, then retry.';
+      setError(message);
       setEnvyScore(null);
       setLandmarks(null);
       setBlinkCount(0);
@@ -122,10 +148,13 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
       setIsCameraActive(false);
       stopScanner();
     } finally {
-      setIsLoadingModel(false);
-      setModelProgress('');
+      if (version === requestVersion.current) {
+        starting.current = false;
+        setIsLoadingModel(false);
+        setModelProgress('');
+      }
     }
-  }, [stopScanner]);
+  }, [stopScanner, sensitivity]);
 
   // Safe visibility change listener
   useEffect(() => {
@@ -142,17 +171,14 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
     };
   }, [stopScanner]);
 
-  // Cleanup on component unmount
-  useEffect(() => {
-    return () => {
-      if (activeLoopRef.current) {
-        cancelAnimationFrame(activeLoopRef.current);
-      }
-      if (stream) {
-        stream.getTracks().forEach((track) => track.stop());
-      }
-    };
-  }, [stream]);
+  // Cancel pending initialization as well as active hardware on unmount.
+  useEffect(() => () => {
+    requestVersion.current += 1;
+    if (activeLoopRef.current) cancelAnimationFrame(activeLoopRef.current);
+    streamRef.current?.getTracks().forEach(track => track.stop());
+    streamRef.current = null;
+    starting.current = false;
+  }, []);
 
   // Framerate control loop throttled to 15 FPS
   useEffect(() => {
@@ -167,11 +193,13 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
     video.muted = true;
     videoElementRef.current = video;
 
-    const engine = EnvyEngine.getInstance();
+    const engine = getLoadedEngine();
+    if (!engine) return;
     const intervalMs = 1000 / 15; // 15 FPS throttling (~66.67ms)
 
+    let cancelled = false;
     const processFrame = () => {
-      if (!isCameraActive) return;
+      if (cancelled) return;
 
       const now = performance.now();
       if (now - lastProcessedTimeRef.current >= intervalMs) {
@@ -203,22 +231,26 @@ export function useEnvyScanner(projectId?: number | null): UseEnvyScannerReturn 
 
     video.play()
       .then(() => {
+        if (cancelled) return;
         activeLoopRef.current = requestAnimationFrame(processFrame);
       })
       .catch((err) => {
         console.error('Error starting HTMLVideoElement playback:', err);
-        setError('Video initialization failed.');
+        if (cancelled) return;
+        setError('The camera preview could not start. Retry the scanner.');
+        stopScanner();
         setEnvyScore(null);
         setLandmarks(null);
       });
 
     return () => {
+      cancelled = true;
       if (activeLoopRef.current) {
         cancelAnimationFrame(activeLoopRef.current);
         activeLoopRef.current = null;
       }
     };
-  }, [isCameraActive, stream]);
+  }, [isCameraActive, stream, stopScanner]);
 
   return {
     stream,

@@ -1,0 +1,73 @@
+PORTFOLIO DE SERGIO ALZATE — CORRECCIONES Y SEO
+2 de octubre de 2026
+Objetivo: reclutadores y búsquedas por el nombre Sergio Alzate.
+
+IMPLEMENTADO
+01. Nueve casos con URL /work/<slug>/, enlaces nativos, recarga y navegación Atrás/Adelante.
+02. Eliminado el rewrite global: Vercel publica archivos estáticos; las rutas desconocidas reciben 404.html con estado 404.
+03. robots.txt válido y sitemap.xml generado en cada build con las diez páginas públicas.
+04. Tarjetas operables con Tab/Enter y enlaces que conservan apertura en otra pestaña.
+05. Diálogo etiquetado, fondo oculto e inert, foco contenido, Escape, restauración del foco y posición de la portada.
+06. Encabezados visibles antes de JavaScript; eliminada la animación que los recortaba completamente.
+07. Encabezado y contador adaptables desde 320 px.
+08. Contadores derivados de los nueve proyectos, incluida la navegación entre casos.
+09. GIF convertidos a MP4 H.264, portadas estáticas y fotografías en WebP. Originales conservados.
+10. Imágenes con dimensiones, carga diferida y reserva de espacio; clips del layout con poster, reproducción automática en bucle sin controles, silencio y pausa al salir de pantalla. Vimeo se carga por interacción; Spotify muestra directamente su iframe original al abrir Lo Fried Beats.
+11. Motor de MediaPipe y widget en chunks separados, descargados al activar el escáner. JS/WASM alineados a 0.10.35.
+12. Estado de audio compartido: el widget respeta Audio off.
+13. Información del escáner con altura limitada a la pantalla, contenido desplazable y acciones accesibles.
+14. Errores visibles, reintento y limpieza de captura, incluso si la inicialización termina después de ocultar la pestaña.
+15. Estado y asociación accesible de menú móvil y acordeones.
+
+CAMBIOS ADICIONALES
+- Reconocimiento corregido a Best Ads on TV.
+- Se preservaron todos los registros de proyectos, trayectoria y reconocimientos. Se añadieron 14 reconocimientos de 2026 en Premios Anda, FIAP, APAP y Effie Bolivia, conservando las entradas repetidas del listado proporcionado.
+- Texto de cliente, año, disciplina y descripción en cada caso. No se incluyeron roles personales ni resultados inventados.
+- HTML prerenderizado de portada, casos y 404; hidratación posterior en React. Los casos se pueden consultar sin JavaScript.
+- Title, descripción, canonical, Open Graph, Twitter y una imagen JPG social de 1200×630 propios para cada caso.
+- Datos estructurados Person/ProfilePage y CreativeWork, con enlaces a perfiles oficiales existentes. No se asignaron créditos personales a los casos.
+- Contacto mailto accesible, textos alternativos más descriptivos y enlace para saltar al contenido.
+- El contacto general permanece; se retiró el enlace Contact Sergio about this work de los casos.
+- Reproductor con controles propios exclusivamente para Vimeo: reproducción, pausa, avance, tiempo, pantalla completa, volumen y silencio. Cada film muestra una portada de su campaña y se inicializa con silencio desactivado y volumen completo al pulsar Play. SDK de Vimeo cargado bajo demanda, con estado de error y reintento. Los clips MP4 del layout se reproducen automáticamente en bucle, sin reproductor ni controles, respetando la preferencia de movimiento reducido. Spotify muestra su reproductor de audio original sin visor adicional.
+- Presentación cinematográfica de Vimeo: portada visible durante la carga y fundido de 320 ms después del evento playing. Film a encuadre completo; controles superpuestos con degradado y ocultación tras 2,2 segundos de inactividad. Mouse, tacto y teclado los revelan; pausa, carga, error, foco de teclado y ajuste de deslizadores los mantienen visibles. Cursor nativo dentro del reproductor.
+- Guía de dirección visual y efectos en docs/GUIA-DISENO-AWWWARDS.md: sistema visual, catálogo de movimiento, fases de implementación y revisión para una candidatura a Awwwards. Las propuestas de rediseño de la guía aún no están implementadas.
+- Preferencia de movimiento reducido y cursor nativo cuando falta JavaScript o no conviene el cursor personalizado.
+- CREATIVE PORTFOLIO formado por partículas: texto vertical en escritorio y horizontal en móvil, dispersión por el puntero, retorno con resorte y onda al pulsar o usar el teclado. Canvas sin dependencias nuevas; animación detenida al asentarse, fuera de pantalla o con la pestaña oculta. Movimiento reducido muestra partículas estáticas; el HTML conserva texto de respaldo si falta JavaScript o canvas.
+- Almacenamiento opcional: un navegador que bloquee localStorage no impide consultar los proyectos.
+
+RESULTADOS COMPROBADOS LOCALMENTE
+- Build de producción, ESLint y git diff --check pasan.
+- Pruebas existentes del algoritmo: pasan; ahora producen un fallo del proceso si hay una aserción fallida.
+- Verificación del build: once documentos HTML (portada + nueve casos + 404), metadatos, datos estructurados, recursos, robots y sitemap válidos.
+- Navegador: escritorio de 1440 px, móviles de 390 y 320 px, teclado, diálogo, historial, recarga, audio, panel informativo y errores del escáner.
+- Las diez páginas públicas abren directamente, sin errores de hidratación; los MP4 cargan sus metadatos y se decodifican.
+- Prueba sin JavaScript de portada y varios casos.
+- Inicialización real del modelo y WASM con una cámara simulada; procesamiento de fotogramas y cierre de la captura al ocultar la pestaña. No se usó una cámara física.
+- Recursos convertidos: de 172.442.320 a 8.030.348 bytes, aproximadamente 95,3 % menos. Esto mide los archivos convertidos, no los bytes transferidos en una visita inicial.
+- JS principal con el reproductor cinematográfico y las partículas: aproximadamente 484 KB minificado y 149 KB gzip; antes era aproximadamente 599 KB y 181 KB gzip. El motor facial queda aparte y el SDK de Vimeo se carga al solicitar un film.
+- Controles propios verificados en escritorio y móviles de 390 y 320 px: reproducción, pausa rápida, avance con teclado, silencio, volumen, pantalla completa y limpieza al cerrar. Integración remota comprobada con el SDK oficial de Vimeo y un iframe de prueba que responde a su protocolo; clips locales comprobados con MP4 reales. Fallo de red y reintento comprobados. Esto no certifica la reproducción de films remotos desde esta conexión.
+- Inicio con sonido comprobado partiendo de un estado remoto simulado con volumen cero y silencio activado: el SDK recibe volumen 1 y silencio false antes de reproducir. Todas las portadas cargan y Play cabe en los reproductores estrechos. El iframe real de Spotify se carga directamente y muestra el álbum en escritorio y móvil.
+- Clips del layout comprobados con MP4 reales en cinco casos, escritorio y móvil: reproducción automática silenciada sin controles, repetición al llegar al final, pausa al salir de pantalla y respeto del movimiento reducido. Los controles propios solo aparecen al activar un film de Vimeo.
+- Transición cinematográfica comprobada en escritorio y móvil táctil: la portada espera a playing, los controles se ocultan y reaparecen, permanecen visibles durante pausa, buffering, foco de teclado y arrastre del progreso, y funcionan en pantalla completa. Se usó el SDK oficial con un iframe de protocolo simulado; esto no certifica los films alojados en Vimeo.
+- La vista previa sirve /robots.txt como texto, /sitemap.xml como XML y rutas desconocidas con estado 404.
+
+COMANDOS
+npm run build        Compila cliente y renderizador, genera las páginas y el sitemap.
+npm run preview      Sirve dist en http://127.0.0.1:4173 con códigos HTTP reales y soporte de rangos de video.
+npm run lint         Revisa el código.
+npm run test:build   Comprueba la salida de npm run build.
+npm run test:engine  Ejecuta las pruebas existentes del algoritmo.
+
+DESPLIEGUE
+El repositorio contiene la versión actual del portafolio y su configuración para Vercel mediante vercel.json. La publicación del sitio y la verificación del dominio son pasos independientes de la actualización del código fuente en GitHub.
+Las páginas se generan durante el build; no se debe restaurar el rewrite global a index.html.
+Los originales de medios se conservan en src/assets, pero no se incluyen como GIF en el build publicado.
+
+VERIFICACIONES PENDIENTES TRAS PUBLICAR
+- Consultar la portada, los nueve casos y una ruta inexistente en el dominio real, incluidos los códigos HTTP.
+- Comprobar la redirección al dominio canónico y las imágenes sociales.
+- Enviar el sitemap y revisar URL Inspection, canonical e indexación en Search Console con acceso a la propiedad.
+- Medir Core Web Vitals reales al percentil 75 por dispositivo: LCP ≤2,5 s, INP ≤200 ms, CLS ≤0,1.
+- Registrar una línea base de consultas por nombre, impresiones, clics, CTR y contactos, y comparar periodos con tráfico suficiente.
+- Confirmar reproducción de Vimeo desde una conexión normal. En el entorno de auditoría el proveedor restringió la conexión; se añadieron enlaces externos, pero no se modificaron cuentas ni permisos del proveedor.
+Estos puntos requieren una versión publicada y datos/accesos reales. Las pruebas locales no certifican posiciones en Google ni Core Web Vitals de usuarios reales.

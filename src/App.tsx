@@ -1,100 +1,18 @@
-import React, { useState, useEffect, useRef, Suspense } from 'react';
-import { useScroll, useVelocity, motion, useTransform, useMotionValue, useSpring, AnimatePresence } from 'framer-motion';
-import { Award, Terminal, User, Briefcase, Folder, ArrowDown } from 'lucide-react';
+import React, { useState, useEffect, useRef, useId, useCallback, Suspense } from 'react';
+import { useScroll, useVelocity, motion, useTransform, useMotionValue, useSpring, AnimatePresence, MotionConfig, useReducedMotion } from 'framer-motion';
+import { Award, User, Briefcase, Folder, ArrowDown } from 'lucide-react';
 import { playSound } from './services/sound';
-
-// Import Dino project assets
-import dinoPortada from './assets/dino/Dinoportada.jpg';
-import dino1 from './assets/dino/Dino 1.png';
-import dino2 from './assets/dino/Dino 2.png';
-import dino3 from './assets/dino/dino 3.gif';
-import dino4 from './assets/dino/Dino 4.gif';
-import dino5 from './assets/dino/Dino 5.gif';
-
-// Import win tv project assets
-import wtPortada from './assets/wintv/WintvPortada.jpg';
-import wt1 from './assets/wintv/wintv_1.png';
-import wt2 from './assets/wintv/wintv_2.png';
-import wt3 from './assets/wintv/wintv_3.png';
-import wt4 from './assets/wintv/wintv_4.png';
-import wt5 from './assets/wintv/wintv_5.gif';
-import wt6 from './assets/wintv/wintv_6.png';
-import wt7 from './assets/wintv/wintv_7.png';
-import wt8 from './assets/wintv/wintv_8.png';
-import wt9 from './assets/wintv/wintv_9.png';
-import wt10 from './assets/wintv/wintv_10.gif';
-import wt11 from './assets/wintv/wintv_11.jpg';
-import wt12 from './assets/wintv/wintv_12.jpg';
-
-// Import Lo-Fried Beats project assets
-import lofried1 from './assets/lofried/lo-fried_1.gif';
-import lofried2 from './assets/lofried/lo-fried_2.png';
-import lofried3 from './assets/lofried/lo-fried_3.png';
-
-// Import Open Late project assets
-import openlate1 from './assets/openlate/openlate1.png';
-import openlate2 from './assets/openlate/openlate2.png';
-import openlate3 from './assets/openlate/openlate3.png';
-import openlate4 from './assets/openlate/openlate4.jpg';
-import openlate5 from './assets/openlate/openlate5.jpg';
-import openlate6 from './assets/openlate/openlate6.jpg';
-
-// Import Copa / Cheering Trophy project assets
-import copa1 from './assets/copa/copa1.jpg';
-import copa2 from './assets/copa/copa2.gif';
-import copaPortada from './assets/copa/copaportada.jpg';
-
-// Import Dedos Llenos project assets
-import dedos1 from './assets/Dedos/dedos1.jpg';
-import dedos2 from './assets/Dedos/dedos2.png';
-import dedos3 from './assets/Dedos/dedos3.png';
-import dedos4 from './assets/Dedos/dedos4.png';
-import dedos5 from './assets/Dedos/dedos5.png';
-
-// Import Sunstats project assets
-import sun1 from './assets/sunstats/sun1.jpg';
-import sun2 from './assets/sunstats/sun2.jpg';
-import sun3 from './assets/sunstats/sun3.jpg';
-import sun4 from './assets/sunstats/sun4.jpg';
-import sun5 from './assets/sunstats/sun5.jpg';
-import sun6 from './assets/sunstats/sun6.jpg';
-import sun7 from './assets/sunstats/sun7.jpg';
-
-// Import Exorcist project assets
-import exorcistPortada from './assets/exorcist/exorcistportada.jpg';
-import exorcist1 from './assets/exorcist/exorcist1.jpg';
-import exorcist2 from './assets/exorcist/exorcist2.jpg';
-import exorcist3 from './assets/exorcist/exorcist3.jpg';
-import exorcist4 from './assets/exorcist/exorcist4.jpg';
-import exorcist5 from './assets/exorcist/exorcist5.avif';
-
-// Import Muvid project assets
-import muvidPortada from './assets/muvid/muvidportada.jpg';
-import muvid1 from './assets/muvid/muvid1.gif';
-import muvid2 from './assets/muvid/muvid2.jpg';
-
-// Import Floating logo
-import logo from './assets/logoSA.svg';
-import searchImage from './assets/search.jpg';
-import { EnvyEngine } from './services/EnvyEngine';
+import { projects, AWARDS_DATA, EXPERIENCES, logo, searchImage, type Festival, type Tier } from './data/portfolio';
+import { GalleryMedia, RemoteVideo } from './components/ProjectMedia';
+import { ScannerLauncher } from './components/ScannerLauncher';
+import { ParticleTitle } from './components/ParticleTitle';
+import { getPageMetadata, updatePageMetadata, getProjectForPath, projectPath } from './services/seo';
+import { getLoadedEngine } from './services/scannerLoader';
 
 // Lazy load the EnvyMeterWidget to defer loading of MediaPipe models and WASM
 const EnvyMeterWidget = React.lazy(() =>
   import('./components/EnvyMeterWidget').then((module) => ({ default: module.EnvyMeterWidget }))
 );
-
-// 9 Creative Director Projects of Sergio Alzate
-const projects = [
-  { "id": 18, "title": "THE CHROME DINO", "category": "On Negocios // Film & Content", "year": "2026", "slug": "dino-on-negocios", "images": [dinoPortada, dino1, dino2, dino3, dino4, dino5], "video": "https://player.vimeo.com/video/1176753029", "rollover": "View the film" },
-  { "id": 1, "title": "ENTERTAINMENT + SOCCER", "category": "WinTv // Film & Content", "year": "2025", "slug": "wintv", "images": [wtPortada, wt1, wt2, wt3, wt4, wt5, wt6, wt7, wt8, wt9, wt10, wt11, wt12], "video": "https://player.vimeo.com/video/1069358927", "rollover": "View the film" },
-  { "id": 2, "title": "LOFRIED BEATS", "category": "KFC // Sound & Content", "year": "2023", "slug": "lo-friedbeats", "images": [lofried1, lofried2, lofried3], "video": "https://player.vimeo.com/video/1007819738", "rollover": "View the case" },
-  { "id": 3, "title": "OPEN LATE", "category": "KFC // Print & OOH", "year": "2024", "slug": "open-late", "images": [openlate3, openlate1, openlate2, openlate4, openlate5, openlate6], "video": "", "rollover": "View the prints" },
-  { "id": 4, "title": "THE CHEERING TROPHY", "category": "Banco Pichincha // Innovation & PR", "year": "2019", "slug": "the-cheering-trophy", "images": [copaPortada, copa1, copa2], "video": "https://player.vimeo.com/video/386616077", "rollover": "View the film" },
-  { "id": 6, "title": "SUN STATS", "category": "KFC // Print & OOH", "year": "2024", "slug": "sun-stats", "images": [sun2, sun1, sun3, sun4, sun5, sun6, sun7], "video": "", "rollover": "View the Prints" },
-  { "id": 5, "title": "FINGERS FULL OF FUN", "category": "Cheetos // Film & Content", "year": "2023", "slug": "dedos-llenos", "images": [dedos2, dedos1, dedos3, dedos4, dedos5], "video": "", "rollover": "View the film" },
-  { "id": 7, "title": "EXORCIST", "category": "Win // Content", "year": "2025", "slug": "win-exorcist", "images": [exorcistPortada, exorcist1, exorcist2, exorcist3, exorcist4, exorcist5], "video": "https://player.vimeo.com/video/1131961594", "rollover": "View the film" },
-  { "id": 9, "title": "MUSIC VIDEO FESTIVAL", "category": "Win // Content", "year": "2025", "slug": "muvid", "images": [muvidPortada, muvid1, muvid2], "video": "https://player.vimeo.com/video/1204577123", "rollover": "View the film" }
-];
 
 // Bento span pattern — custom brutalist layout with no 1x1 boxes (small boxes are now larger).
 // 3 stellar projects are scaled to 2x2. Other projects use 2x1 (wide) or 1x2 (tall).
@@ -360,7 +278,7 @@ const ProjectMedia: React.FC<{ id: number; image?: string; bw?: boolean }> = ({
         <ProjectThumbnail id={id} />
       </div>
       {showImage && (
-        <img
+        <GalleryMedia
           src={image}
           alt=""
           loading="lazy"
@@ -376,241 +294,6 @@ const ProjectMedia: React.FC<{ id: number; image?: string; bw?: boolean }> = ({
 // Every recognition, grouped by festival. Each entry is {year, result} where
 // `result` already encodes the medal/level + category + project, exactly as
 // logged in the source list. `tier` drives the colour of the medal chip.
-type Tier = 'gold' | 'silver' | 'bronze' | 'shortlist' | 'jury' | 'mention' | 'feature' | 'other';
-
-interface AwardEntry {
-  year: string;
-  result: string;
-  tier: Tier;
-}
-
-interface Festival {
-  name: string;
-  location?: string;
-  entries: AwardEntry[];
-}
-
-const AWARDS_DATA: Festival[] = [
-  {
-    name: 'Cannes Lions',
-    location: 'FRANCE',
-    entries: [
-      { year: '2021', result: 'Exhibition — ACT Responsible’s Great Ads', tier: 'feature' },
-      { year: '2021', result: 'Jury — Future Lions', tier: 'jury' },
-      { year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' },
-      { year: '2019', result: 'Shortlist — Radio & Audio / The Cheering Trophy', tier: 'shortlist' },
-      { year: '2019', result: 'Shortlist — Radio & Audio / The Cheering Trophy', tier: 'shortlist' },
-      { year: '2017', result: 'Shortlist — Media / Revealing Light', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Print & Publishing / GTI Family Font', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Media / Missing Tag', tier: 'shortlist' },
-      { year: '2013', result: 'Bronze — Print / Young Lions Ecuador', tier: 'bronze' },
-    ],
-  },
-  {
-    name: 'Clio Awards',
-    location: 'USA',
-    entries: [
-      { year: '2020', result: 'Clio Sports Silver — Direct / The Cheering Trophy', tier: 'silver' },
-      { year: '2020', result: 'Clio Sports Bronze — Experiential/Events / The Cheering Trophy', tier: 'bronze' },
-      { year: '2020', result: 'Clio Sports Bronze — Public Relations / The Cheering Trophy', tier: 'bronze' },
-    ],
-  },
-  {
-    name: 'LIA Awards',
-    location: 'USA',
-    entries: [{ year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' }],
-  },
-  {
-    name: 'One Show',
-    location: 'USA',
-    entries: [{ year: '2020', result: 'Merit — Innovation in Radio & Audio / The Cheering Trophy', tier: 'mention' }],
-  },
-  {
-    name: 'Lürzer’s Archive',
-    location: 'GERMANY',
-    entries: [
-      { year: '2024', result: 'Magazine 03.268 / KFC Sun Stats', tier: 'feature' },
-      { year: '2024', result: 'Magazine 40th Anniversary / KFC Open Late', tier: 'feature' },
-    ],
-  },
-  {
-    name: 'Adweek Project Isaac',
-    location: 'USA',
-    entries: [{ year: '2017', result: 'Gold — HR Invention / No Gender Profile', tier: 'gold' }],
-  },
-  {
-    name: 'CAC',
-    location: 'ECUADOR',
-    entries: [{ year: '2020', result: 'Expo — Contemporary Art Center of Quito', tier: 'feature' }],
-  },
-  {
-    name: 'Ojo de Iberoamérica',
-    location: 'LATAM',
-    entries: [
-      { year: '2024', result: 'Bronze — Radio & Sound / Lo Fried Beats', tier: 'bronze' },
-      { year: '2024', result: 'Bronze — Print / Sun Stats', tier: 'bronze' },
-      { year: '2024', result: 'Shortlist — Print / Sun Stats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Radio & Sound / Lo Fried Beats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Radio & Sound / Lo Fried Beats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Social & Digital / Lo Fried Beats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Best Country Idea', tier: 'shortlist' },
-      { year: '2024', result: 'Jury — Radio & Sound', tier: 'jury' },
-      { year: '2024', result: 'Jury — Best Country Idea', tier: 'jury' },
-      { year: '2019', result: 'Silver — Ojo Sports / The Cheering Trophy', tier: 'silver' },
-      { year: '2019', result: 'Bronze — El Ojo PR / The Cheering Trophy', tier: 'bronze' },
-      { year: '2019', result: 'Shortlist — Best Country Idea / The Cheering Trophy', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Innovación / Missing Tag', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Media / Missing Tag', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Sustentable / Missing Tag', tier: 'shortlist' },
-      { year: '2016', result: 'Shortlist — Interacción / Missing Tag', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Sol',
-    location: 'LATAM',
-    entries: [{ year: '2019', result: 'Shortlist — Uso Innovador de Audio / The Cheering Trophy', tier: 'shortlist' }],
-  },
-  {
-    name: 'FIAP',
-    location: 'LATAM',
-    entries: [
-      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
-      { year: '2025', result: 'Bronze — Producción / WinTv', tier: 'bronze' },
-      { year: '2016', result: 'Shortlist — Innovación en Redes Sociales / Missing Tag', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Festival of Media',
-    location: 'GLOBAL',
-    entries: [{ year: '2016', result: 'Gold — Best Social Media Campaign / Missing Tag', tier: 'gold' }],
-  },
-  {
-    name: 'WINA',
-    location: 'GLOBAL',
-    entries: [
-      { year: '2021', result: 'Bronze — Print / Kids', tier: 'bronze' },
-      { year: '2021', result: 'Honorable Mention — Print / Reflections', tier: 'mention' },
-    ],
-  },
-  {
-    name: 'Best Ads of TV',
-    location: 'GLOBAL',
-    entries: [
-      { year: '2026', result: 'Best Print / By mom’s side', tier: 'gold' },
-      { year: '2026', result: 'Best Film / Dino', tier: 'gold' },
-      { year: '2024', result: 'Best Interactive / Good o.Meter', tier: 'gold' },
-      { year: '2024', result: 'Best Print / Sun Stats', tier: 'gold' },
-      { year: '2024', result: 'Best Print / Open Late', tier: 'gold' },
-      { year: '2023', result: 'Best Print / Ice Scream', tier: 'gold' },
-      { year: '2021', result: 'Best Print / Toys', tier: 'gold' },
-      { year: '2020', result: 'Best / Smart watch for kids', tier: 'gold' },
-      { year: '2018', result: 'Best Print / Packed in history', tier: 'gold' },
-    ],
-  },
-  {
-    name: 'IAB',
-    location: 'LATAM',
-    entries: [
-      { year: '2017', result: 'Bronze — Uso Nativo del medio / No Gender Profile', tier: 'bronze' },
-      { year: '2016', result: 'Silver — Campaign on Social Networks / Missing Tag', tier: 'silver' },
-    ],
-  },
-  {
-    name: 'Care Awards',
-    location: 'GLOBAL',
-    entries: [{ year: '2021', result: 'Jury — Print', tier: 'jury' }],
-  },
-  {
-    name: 'FEPI',
-    location: 'LATAM',
-    entries: [
-      { year: '2024', result: 'Jury — Campañas integrales', tier: 'jury' },
-      { year: '2022', result: 'Jury — Innovación en medios', tier: 'jury' },
-    ],
-  },
-  {
-    name: 'Ad Forum PHNX',
-    location: 'GLOBAL',
-    entries: [
-      { year: '2024', result: 'Jury', tier: 'jury' },
-      { year: '2023', result: 'Jury', tier: 'jury' },
-      { year: '2022', result: 'Jury', tier: 'jury' },
-      { year: '2021', result: 'Jury', tier: 'jury' },
-    ],
-  },
-  {
-    name: 'Diente',
-    location: 'ARGENTINA',
-    entries: [
-      { year: '2018', result: 'Honorable Mention — Design / Selfish box', tier: 'mention' },
-      { year: '2017', result: 'Bronze — Promo and Activation & PR / No Gender Profile', tier: 'bronze' },
-      { year: '2017', result: 'Honorable Mention — Interactive / No Gender Profile', tier: 'mention' },
-    ],
-  },
-  {
-    name: 'APAP',
-    location: 'PERU',
-    entries: [{ year: '2025', result: 'Bronze — Film', tier: 'bronze' }],
-  },
-  {
-    name: 'Effie Awards Peru',
-    location: 'PERU',
-    entries: [
-      { year: '2026', result: 'Silver — Extensión de Línea / Win Tv', tier: 'silver' },
-      { year: '2026', result: 'Silver — Éxito Sostenido / Win', tier: 'silver' },
-      { year: '2026', result: 'Bronze — David y Goliat / Win Tv', tier: 'bronze' },
-      { year: '2026', result: 'Bronze — Promoción de Servicios / Win - Exorcista', tier: 'bronze' },
-      { year: '2026', result: 'Silver — Marketing Estacional / Win - Exorcista', tier: 'silver' },
-      { year: '2026', result: 'Silver — Internet y Telecomunicaciones / Win - Exorcista', tier: 'silver' },
-      { year: '2026', result: 'Shortlist — Innovación en el negocio / Marsella - Nadie huele como tú', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Cóndor',
-    location: 'ECUADOR',
-    entries: [
-      { year: '2024', result: 'Bronze — Craft Photo / Open Late', tier: 'bronze' },
-      { year: '2024', result: 'Shortlist — Radio / Lo Fried Beats', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Print and Publishing / Open Late', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Digital Craft / Nuggets Sound Test', tier: 'shortlist' },
-      { year: '2024', result: 'Shortlist — Craft Audio / Nuggets Sound Test', tier: 'shortlist' },
-      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
-      { year: '2023', result: 'Silver — Radio / Lo Fried Beats', tier: 'silver' },
-      { year: '2023', result: 'Silver — PR / Paranormal Activity', tier: 'silver' },
-      { year: '2023', result: 'Bronze — Digital / Paranormal Activity', tier: 'bronze' },
-      { year: '2023', result: 'Bronze — Craft / Fried on the map', tier: 'bronze' },
-      { year: '2023', result: 'Shortlist — Craft / Fried on the map', tier: 'shortlist' },
-      { year: '2023', result: 'Shortlist — Craft / Paranormal Icetivity', tier: 'shortlist' },
-      { year: '2018', result: 'Silver — Print and Publishing / Terrified Posters', tier: 'silver' },
-      { year: '2018', result: 'Bronze — Craft / Terrified Posters', tier: 'bronze' },
-    ],
-  },
-  {
-    name: 'LUX',
-    location: 'ECUADOR',
-    entries: [
-      { year: '2019', result: 'Silver — Direct / The Cheering Trophy', tier: 'silver' },
-      { year: '2019', result: 'Bronze — The Cheering Trophy', tier: 'bronze' },
-      { year: '2019', result: 'Shortlist — Craft music / Discover extralike', tier: 'shortlist' },
-      { year: '2018', result: 'Shortlist — Outdoor / Terrified Posters', tier: 'shortlist' },
-      { year: '2018', result: 'Shortlist — Print Craft / Terrified Posters', tier: 'shortlist' },
-    ],
-  },
-  {
-    name: 'Punto 99 Awards',
-    location: 'ECUADOR',
-    entries: [{ year: '2023', result: 'Best Creative', tier: 'gold' }],
-  },
-  {
-    name: 'BenditaCarpeta',
-    location: 'LATAM',
-    entries: [
-      { year: '2017', result: 'Tercer Lugar del Mundial Creativo', tier: 'bronze' },
-      { year: '2016', result: 'Dupla ganadora del Mundial Creativo', tier: 'gold' },
-    ],
-  },
-];
-
 const TIER_META: Record<Tier, { label: string; chip: string; dot: string }> = {
   gold: { label: 'GOLD', chip: 'bg-brand-orange text-brand-black font-black', dot: 'bg-brand-orange' },
   silver: { label: 'SILVER', chip: 'bg-brand-white text-brand-black font-black', dot: 'bg-brand-white' },
@@ -630,9 +313,12 @@ const AwardAccordion: React.FC<{
   onToggle?: () => void;
 }> = ({ festival, defaultOpen = false, onToggle }) => {
   const [open, setOpen] = useState(defaultOpen);
+  const panelId = useId();
   return (
     <div className="border border-zinc-900 bg-black/40">
       <button
+        aria-expanded={open}
+        aria-controls={panelId}
         onClick={() => {
           setOpen((o) => !o);
           onToggle?.();
@@ -676,13 +362,8 @@ const AwardAccordion: React.FC<{
           </motion.span>
         </div>
       </button>
-      <AnimatePresence initial={false}>
-        {open && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: 'auto', opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+      <div id={panelId} hidden={!open}>
+          <div
             className="overflow-hidden"
           >
             <div className="px-4 md:px-5 pb-4 pt-1 border-t border-zinc-900 divide-y divide-zinc-950">
@@ -699,78 +380,14 @@ const AwardAccordion: React.FC<{
                 );
               })}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+      </div>
     </div>
   );
 };
 
 const BIOGRAPHY_TEXT = "I’M SERGIO ALZATE, BORN IN ECUADOR, AND I LIKE TO DEFINE MYSELF AS A CREATIVE COOKER WITH A PART MAKER, ANOTHER SAMPLER, AND THE REST... WELL, I’M STILL LEARNING THE REST.";
 const bioWords = BIOGRAPHY_TEXT.split(" ");
-
-const EXPERIENCES = [
-  {
-    role: 'Group Creative Director',
-    company: 'GUT',
-    period: 'Now',
-    location: 'CDMX - México',
-  },
-  {
-    role: 'Creative Director',
-    company: 'Lemon The Agency',
-    period: '2025',
-    location: 'Lima - Peru',
-  },
-  {
-    role: 'Creative Director',
-    company: 'Punto 99',
-    period: '2023 - 2024',
-    location: 'Quito - Ecuador',
-  },
-  {
-    role: 'Creative Director',
-    company: 'Don',
-    period: '2022 - 2023',
-    location: 'Buenos Aires - Argentina',
-  },
-  {
-    role: 'Sr. Copywriter',
-    company: 'Wunderman Thompson',
-    period: '2019',
-    location: 'Santiago - Chile',
-  },
-  {
-    role: 'Creative Director',
-    company: 'Mullen Lowe',
-    period: '2018 - 2019',
-    location: 'Quito - Ecuador',
-  },
-  {
-    role: 'Sr. Copywriter',
-    company: 'Publicis',
-    period: '2017 - 2018',
-    location: 'São Paulo - Brazil',
-  },
-  {
-    role: 'Sr. Copywriter',
-    company: 'DPZ&T',
-    period: '2017 - 2018',
-    location: 'São Paulo - Brazil',
-  },
-  {
-    role: 'Sr Copywriter',
-    company: 'Wunderman',
-    period: '2015 - 2017',
-    location: 'Buenos Aires - Argentina',
-  },
-  {
-    role: 'Jr Copywriter',
-    company: 'Tribal DDB',
-    period: '2013 - 2015',
-    location: 'Buenos Aires - Argentina',
-  },
-];
 
 interface WordKeyedProps {
   word: string;
@@ -782,19 +399,19 @@ interface WordKeyedProps {
 const WordKeyed: React.FC<WordKeyedProps> = ({ word, index, progress, total }) => {
   const start = index / total;
   const end = Math.min(1, (index + 1.2) / total);
-  
+
   const wordProgress = progress > end
     ? 1
     : (progress < start ? 0 : (progress - start) / (end - start));
-  
+
   const r = Math.round(255 - 255 * wordProgress);
   const g = Math.round(255 - 255 * wordProgress);
   const b = Math.round(255 - 255 * wordProgress);
   const textColor = `rgb(${r}, ${g}, ${b})`;
-  
+
   const bgOpacity = wordProgress;
   const backgroundColor = `rgba(206, 254, 70, ${bgOpacity})`;
-  
+
   return (
     <span
       style={{
@@ -818,11 +435,11 @@ const ScrollBiography: React.FC = () => {
       if (!el) return;
       const rect = el.getBoundingClientRect();
       const windowHeight = window.innerHeight;
-      
+
       const startY = windowHeight * 0.80;
       const endY = windowHeight * 0.30;
       const currentY = rect.top;
-      
+
       const p = currentY > startY
         ? 0
         : (currentY < endY ? 1 : (startY - currentY) / (startY - endY));
@@ -831,13 +448,13 @@ const ScrollBiography: React.FC = () => {
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("resize", handleScroll);
-    
+
     // Initial call to set correct progress on mount
     handleScroll();
-    
+
     // Additional deferred execution check to capture correct coordinates after layout shifts
     const timer = setTimeout(handleScroll, 100);
-    
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", handleScroll);
@@ -854,22 +471,30 @@ const ScrollBiography: React.FC = () => {
   );
 };
 
-function App() {
+function App({ initialPath }: { initialPath?: string }) {
+  const prefersReducedMotion = useReducedMotion();
+  const startingPath = initialPath ?? (typeof window === 'undefined' ? '/' : window.location.pathname);
+  const [pathname, setPathname] = useState(startingPath);
+  const HeroHeading = pathname === "/" ? motion.h1 : motion.h2;
+  const backgroundRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const modalScrollRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
+  const homeScrollRef = useRef(0);
+  const [scannerRequested, setScannerRequested] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Clear envy history and viewed status on page load (refresh)
   useEffect(() => {
     projects.forEach((p) => {
-      localStorage.removeItem(`envy-project-${p.id}`);
-      localStorage.removeItem(`envy-project-viewed-${p.id}`);
+      try {
+        localStorage.removeItem(`envy-project-${p.id}`);
+        localStorage.removeItem(`envy-project-viewed-${p.id}`);
+      } catch { /* Session state works even when browser storage is blocked. */ }
     });
   }, []);
 
-  const [isBooted, setIsBooted] = useState(() => {
-    const params = new URLSearchParams(typeof window !== 'undefined' ? window.location.search : '');
-    return params.get('skipPreloader') === 'true' || params.get('autoActivateScanner') === 'true';
-  });
-  const [bootLogs, setBootLogs] = useState<string[]>([]);
+  const isBooted = true;
   const isScannerLoaded = true;
   const [envyScore, setEnvyScore] = useState<number | null>(null);
   const [showExplanation, setShowExplanation] = useState(true);
@@ -877,7 +502,7 @@ function App() {
   const [isWidgetInfoOpen, setIsWidgetInfoOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [showSearchWidget, setShowSearchWidget] = useState(true);
-  
+
   // Parallax Scroll Tracking
   const { scrollY } = useScroll();
   const heroY = useTransform(scrollY, [0, 800], [0, -120]);
@@ -885,7 +510,7 @@ function App() {
   const heroMarqueeY = useTransform(scrollY, [0, 800], [0, 80]);
 
 
-  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(null);
+  const [selectedProject, setSelectedProject] = useState<typeof projects[0] | null>(() => getProjectForPath(startingPath));
   const [cursorLabel, setCursorLabel] = useState<string>('');
 
   const scrollTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -895,7 +520,7 @@ function App() {
       clearTimeout(scrollTimeoutRef.current);
     }
     scrollTimeoutRef.current = setTimeout(() => {
-      EnvyEngine.getInstance().triggerScrollStopBoost();
+      getLoadedEngine()?.triggerScrollStopBoost();
     }, 450);
   };
 
@@ -908,21 +533,68 @@ function App() {
     };
   }, [selectedProject]);
 
-  // Listen for 'Escape' key to close active project details drawer
+  const closeProject = useCallback(() => {
+    playSound('click', isMuted);
+    if (window.history.state?.portfolioModal) {
+      window.history.back();
+    } else {
+      window.history.pushState({}, '', '/#work');
+      setPathname('/');
+      setSelectedProject(null);
+      requestAnimationFrame(() => document.getElementById('work')?.scrollIntoView({ behavior: 'instant' }));
+    }
+  }, [isMuted]);
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.key === 'Esc') {
-        if (selectedProject) {
-          playSound('click', isMuted);
-          setSelectedProject(null);
+    const syncLocation = () => {
+      setPathname(window.location.pathname);
+      setSelectedProject(getProjectForPath(window.location.pathname));
+    };
+    window.addEventListener('popstate', syncLocation);
+    return () => window.removeEventListener('popstate', syncLocation);
+  }, []);
+
+  useEffect(() => {
+    updatePageMetadata(getPageMetadata(pathname));
+  }, [pathname]);
+
+  // Keep keyboard focus inside the dialog, then return it to its opener.
+  useEffect(() => {
+    if (!selectedProject) return;
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (modalScrollRef.current) modalScrollRef.current.scrollTop = 0;
+    const focusable = () => [...dialog.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), video[controls], iframe, [tabindex="0"]')]
+      .filter(el => el.tabIndex >= 0 && el.getClientRects().length > 0);
+    (dialog.querySelector<HTMLElement>("#project-close") ?? focusable()[0] ?? dialog).focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        if (document.fullscreenElement) return;
+        event.preventDefault();
+        closeProject();
+      } else if (event.key === 'Tab') {
+        const items = focusable();
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (!first) { event.preventDefault(); dialog.focus(); return; }
+        if (event.shiftKey && (document.activeElement === first || !dialog.contains(document.activeElement))) {
+          event.preventDefault(); last.focus();
+        } else if (!event.shiftKey && (document.activeElement === last || !dialog.contains(document.activeElement))) {
+          event.preventDefault(); first.focus();
         }
       }
     };
-    window.addEventListener('keydown', handleKeyDown);
+    dialog.addEventListener('keydown', handleKeyDown);
     return () => {
-      window.removeEventListener('keydown', handleKeyDown);
+      dialog.removeEventListener('keydown', handleKeyDown);
+      if (!getProjectForPath(window.location.pathname)) {
+        requestAnimationFrame(() => {
+          if (openerRef.current) window.scrollTo({ top: homeScrollRef.current, behavior: 'instant' });
+          (openerRef.current ?? document.getElementById(`project-${selectedProject.id}`))?.focus({ preventScroll: true });
+        });
+      }
     };
-  }, [selectedProject, isMuted]);
+  }, [selectedProject, closeProject]);
 
   // Scroll tracking state to animate floating logo top position
   const [logoTop, setLogoTop] = useState<number>(60);
@@ -933,53 +605,53 @@ function App() {
       const scrollYVal = window.scrollY;
       const viewportHeight = window.innerHeight;
       const scrollHeight = document.documentElement.scrollHeight;
-      
+
       const isMobile = window.innerWidth < 768;
-      
+
       // Align with the header's S_A // CD.01 text vertical center (pt-6 = 24px + text/2 = 32px)
       const topStart = 32;
       const centerPos = viewportHeight / 2;
-      
+
       const footerEl = document.getElementById('footer-links');
-      
+
       // Calculate baseline position (start to center transition)
       let currentBase = centerPos;
       if (scrollYVal < 300) {
         const progress = scrollYVal / 300;
         currentBase = topStart + (centerPos - topStart) * progress;
       }
-      
+
       if (footerEl) {
         const footerRect = footerEl.getBoundingClientRect();
         // Target: logo center sits inside the top padding of the footer-links container
         const targetFooterTop = footerRect.top + (isMobile ? 20 : 24);
-        
+
         const maxScroll = scrollHeight - viewportHeight;
         const distanceToBottom = Math.max(0, maxScroll - scrollYVal);
-        
+
         const transitionZone = 400; // start moving down in the last 400px of scroll
         if (distanceToBottom < transitionZone && maxScroll > 300) {
           // Calculate interpolation progress (0 when 400px away, 1 when at bottom)
           const progress = (transitionZone - distanceToBottom) / transitionZone;
           const clampedProgress = Math.min(1, Math.max(0, progress));
-          
+
           // Interpolate from currentBase to targetFooterTop
           setLogoTop(currentBase + (targetFooterTop - currentBase) * clampedProgress);
           return;
         }
       }
-      
+
       setLogoTop(currentBase);
     };
-    
+
     window.addEventListener('scroll', updateLogoPosition);
     window.addEventListener('resize', updateLogoPosition);
     // Run initially to set the right starting position
     updateLogoPosition();
-    
+
     // Run deferred once to make sure layout has finished shifting
     const timer = setTimeout(updateLogoPosition, 100);
-    
+
     return () => {
       window.removeEventListener('scroll', updateLogoPosition);
       window.removeEventListener('resize', updateLogoPosition);
@@ -991,14 +663,24 @@ function App() {
   const [viewedProjects, setViewedProjects] = useState<Record<number, boolean>>({});
 
   // Helper to open project drawer and mark as viewed
-  const handleSelectProject = (project: typeof projects[0]) => {
+  const handleSelectProject = (project: typeof projects[0], event?: React.MouseEvent<HTMLAnchorElement>) => {
+    if (event && (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0)) return;
+    event?.preventDefault();
+    if (!selectedProject) {
+      openerRef.current = event?.currentTarget ?? document.activeElement as HTMLElement;
+      homeScrollRef.current = window.scrollY;
+    }
+    const url = projectPath(project);
+    if (selectedProject) window.history.replaceState(window.history.state, '', url);
+    else window.history.pushState({ portfolioModal: true }, '', url);
+    setPathname(url);
     playSound('click', isMuted);
     setSelectedProject(project);
     if (!viewedProjects[project.id]) {
       const updated = { ...viewedProjects, [project.id]: true };
       setViewedProjects(updated);
       if (typeof localStorage !== 'undefined') {
-        localStorage.setItem(`envy-project-viewed-${project.id}`, 'true');
+        try { localStorage.setItem(`envy-project-viewed-${project.id}`, 'true'); } catch { /* Optional session cache. */ }
       }
     }
   };
@@ -1009,7 +691,7 @@ function App() {
   const cursorSpringConfig = { stiffness: 450, damping: 28, mass: 0.2 };
   const cursorSpringX = useSpring(cursorX, cursorSpringConfig);
   const cursorSpringY = useSpring(cursorY, cursorSpringConfig);
-  
+
   // Real-time project reaction peak tracker (starts clean on every page load)
   const [projectPeaks, setProjectPeaks] = useState<Record<number, number>>({});
 
@@ -1024,40 +706,10 @@ function App() {
   // Glitch state calculations
   const isGlitching = false;
 
-  // Simulated Boot Loader Diagnostics sequence
-  useEffect(() => {
-    const sequences = [
-      'INITIALIZING ENVY-METER PROTOCOLS...',
-      'SYSTEM CHECK: WASM STACK RESOLVER DEPLOYED.',
-      'ASSET LINKED: FACELANDMARKER STACK IN Standby.',
-      'STITCH CONFIG: COLOR BASE METRICS INITIALIZED (#121212, #FFFFFF, #CEFE46).',
-      'RAMI VOSS GRID SYSTEM BUILT.',
-      'DIAGNOSTIC STATUS: READY FOR HOSTILE AGENTS.',
-    ];
-    let index = 0;
-    let autoBootTimer: ReturnType<typeof setTimeout> | undefined;
-
-    const interval = setInterval(() => {
-      if (index < sequences.length) {
-        setBootLogs((prev) => [...prev, `> ${sequences[index]}`]);
-        index++;
-      } else {
-        clearInterval(interval);
-        autoBootTimer = setTimeout(() => {
-          setIsBooted(true);
-        }, 600);
-      }
-    }, 200);
-
-    return () => {
-      clearInterval(interval);
-      if (autoBootTimer) clearTimeout(autoBootTimer);
-    };
-  }, []);
-
   // Custom Magnetic Cursor coordinates tracking
   useEffect(() => {
     if (!isBooted) return;
+    if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) document.body.dataset.customCursor = 'true';
 
     const handleMouseMove = (e: MouseEvent) => {
       let target = e.target as HTMLElement | null;
@@ -1105,7 +757,7 @@ function App() {
       setMousePos({ x: targetX, y: targetY });
       cursorX.set(targetX);
       cursorY.set(targetY);
-      
+
       if (isGlitching) {
         setCursorState('glitch');
         setCursorLabel('');
@@ -1116,8 +768,11 @@ function App() {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [isBooted, isGlitching, cursorX, cursorY]);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      delete document.body.dataset.customCursor;
+    };
+  }, [isBooted, isGlitching, cursorX, cursorY, prefersReducedMotion]);
 
   // Adjust cursor state immediately when glitch level switches
   useEffect(() => {
@@ -1144,7 +799,7 @@ function App() {
   // Reset EnvyEngine score state whenever a project is opened or closed
   // to ensure independent measurement starting from scratch
   useEffect(() => {
-    EnvyEngine.getInstance().reset();
+    getLoadedEngine()?.reset();
   }, [selectedProject]);
 
   // Track envy score for the currently selected project (independent measurement)
@@ -1155,7 +810,7 @@ function App() {
         const frameId = requestAnimationFrame(() => {
           setProjectPeaks((prev) => {
             const updated = { ...prev, [selectedProject.id]: envyScore };
-            localStorage.setItem(`envy-project-${selectedProject.id}`, envyScore.toFixed(1));
+            try { localStorage.setItem(`envy-project-${selectedProject.id}`, envyScore.toFixed(1)); } catch { /* Optional session cache. */ }
             return updated;
           });
         });
@@ -1211,137 +866,27 @@ function App() {
     '--envy-intensity': '0',
   } as React.CSSProperties;
 
-  // Preloader Screen Render
-  if (!isBooted) {
-    const progress = Math.min(100, Math.round((bootLogs.length / 6) * 100));
-    const blockCount = Math.round((bootLogs.length / 6) * 12);
-    const progressBar = '█'.repeat(blockCount) + '░'.repeat(12 - blockCount);
 
-    return (
-      <div className="fixed inset-0 bg-black z-[999] flex flex-col justify-between p-8 md:p-16 lg:p-24 font-mono select-none overflow-hidden relative">
-        {/* Spotlight ambient orange glow */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-orange/5 rounded-full blur-[100px] pointer-events-none z-0" />
-        
-        {/* Dynamic Film Grain texture overlay */}
-        <div className="film-grain-container" />
-
-        {/* Rotating BIOMETRIC HUD Reticle background */}
-        <div className="absolute right-12 bottom-12 md:right-24 md:bottom-24 w-64 h-64 md:w-96 md:h-96 pointer-events-none opacity-[0.05] z-0 animate-[spin_30s_linear_infinite]">
-          <svg viewBox="0 0 100 100" className="w-full h-full stroke-brand-orange fill-none" strokeWidth="0.5">
-            <circle cx="50" cy="50" r="46" strokeDasharray="4 4" />
-            <circle cx="50" cy="50" r="32" />
-            <circle cx="50" cy="50" r="18" strokeDasharray="1 1" />
-            <circle cx="50" cy="50" r="4" fill="currentColor" className="text-brand-orange" />
-            <line x1="50" y1="0" x2="50" y2="100" />
-            <line x1="0" y1="50" x2="100" y2="50" />
-          </svg>
-        </div>
-
-        {/* Large watermark-like technical title */}
-        <div className="absolute top-12 right-12 text-right opacity-[0.04] z-0 pointer-events-none select-none hidden md:block">
-          <div className="font-black text-6xl lg:text-8xl leading-none text-stroke-white tracking-tighter">
-            INIT_STK
-          </div>
-          <div className="text-[10px] tracking-widest mt-2 font-mono">
-            SYS_BOOT_LOADER // CDMX.LIMA.PERU
-          </div>
-        </div>
-
-        {/* Header Block */}
-        <div className="flex items-center justify-between border-b border-zinc-900 pb-6 z-10">
-          <div className="flex items-center gap-3">
-            <Terminal className="w-4 h-4 text-brand-orange animate-pulse" />
-            <span className="font-black text-[10px] md:text-xs uppercase tracking-widest text-zinc-400">
-              SERGIO ALZATE // BIOMETRIC SYSTEM BOOT v1.0
-            </span>
-          </div>
-          <div className="text-[9px] text-zinc-600 hidden md:block">
-            TIME_LNK: {new Date().toISOString().substring(11, 19)} UTC
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="max-w-2xl w-full my-auto z-10 relative">
-          <div className="mb-4">
-            <span className="text-[10px] text-zinc-500 uppercase tracking-widest block mb-1">
-              STATUS CALIBRATION
-            </span>
-            <h1 className="font-black text-3xl md:text-5xl uppercase tracking-tighter text-white">
-              {progress < 100 ? 'System Booting...' : 'Diagnostics Clear.'}
-            </h1>
-          </div>
-
-          {/* Technical Diagnostics Logs Console Box */}
-          <div className="border border-zinc-900 bg-zinc-950/50 p-6 backdrop-blur-sm relative overflow-hidden group">
-            {/* Corner Crosshairs */}
-            <div className="absolute top-1 left-1 w-1.5 h-1.5 border-t border-l border-zinc-700" />
-            <div className="absolute top-1 right-1 w-1.5 h-1.5 border-t border-r border-zinc-700" />
-            <div className="absolute bottom-1 left-1 w-1.5 h-1.5 border-b border-l border-zinc-700" />
-            <div className="absolute bottom-1 right-1 w-1.5 h-1.5 border-b border-r border-zinc-700" />
-
-            <div className="space-y-3 text-[10px] md:text-xs leading-normal font-mono h-40 overflow-y-auto">
-              {bootLogs.map((log, index) => {
-                let statusLabel = '[ BOOT ]';
-                let statusColor = 'text-brand-orange';
-                
-                if (log.includes('READY')) {
-                  statusLabel = '[  OK  ]';
-                  statusColor = 'text-emerald-500';
-                } else if (log.includes('SYSTEM CHECK') || log.includes('STITCH')) {
-                  statusLabel = '[ CONF ]';
-                  statusColor = 'text-cyan-400';
-                }
-                
-                return (
-                  <div key={index} className="flex gap-3 text-zinc-400">
-                    <span className={`font-bold ${statusColor} flex-shrink-0`}>{statusLabel}</span>
-                    <span className="flex-1">{log.replace('> ', '')}</span>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Progress metrics and bar */}
-          <div className="mt-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
-            <div className="flex-grow">
-              <div className="flex justify-between font-mono text-[10px] text-zinc-500 mb-2 tracking-wider">
-                <span>{progressBar}</span>
-                <span className="font-bold text-brand-orange">{progress}% LINKED</span>
-              </div>
-              <div className="w-full bg-zinc-950 border border-zinc-900 h-1 relative overflow-hidden">
-                <div 
-                  className="absolute top-0 left-0 h-full bg-brand-orange transition-all duration-200" 
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Footer Area */}
-        <div className="flex justify-between items-center border-t border-zinc-900 pt-6 z-10 font-mono text-[9px] text-zinc-600">
-          <span>HOST: SECURE_CONTAINER</span>
-          <span>© {new Date().getFullYear()} SEARCH_PORTFOLIO</span>
-        </div>
-      </div>
-    );
+  if (pathname !== '/' && !getProjectForPath(pathname)) {
+    return <main className="min-h-screen grid place-content-center gap-6 p-8"><h1 className="text-4xl font-bold">Page not found</h1><a className="text-brand-orange underline" href="/">Return to Sergio Alzate’s portfolio</a></main>;
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <div
       style={containerStyle}
       className={`min-h-screen transition-all duration-300 relative ${
         isGlitching ? 'glitch-flash text-black' : 'bg-black text-white'
       }`}
     >
-      {/* Dynamic Film Grain texture overlay */}
-      <div className="film-grain-container" />
+      <div aria-hidden="true" className="film-grain-container" />
+      <div ref={backgroundRef} inert={Boolean(selectedProject)} hidden={Boolean(selectedProject)}>
+      <a className="skip-link" href="#main-content">Skip to content</a>
 
       {/* Floating vertical left logo */}
-      <div 
+      <div
         className="hidden md:block fixed left-12 z-40 pointer-events-auto select-none -translate-y-1/2"
-        style={{ 
+        style={{
           top: `${logoTop}px`,
           transition: 'top 0.25s cubic-bezier(0.25, 1, 0.5, 1)'
         }}
@@ -1350,8 +895,8 @@ function App() {
           <button
             onClick={() => {
               playSound('click', isMuted);
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-              setSelectedProject(null);
+              window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+              if (selectedProject) closeProject();
             }}
             onMouseEnter={() => {
               playSound('tick', isMuted);
@@ -1363,18 +908,18 @@ function App() {
             className="block focus:outline-none hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
             aria-label="Scroll to top"
           >
-            <img 
-              src={logo} 
-              alt="SA Logo" 
+            <GalleryMedia
+              src={logo} width={145} height={158}
+              alt="SA Logo"
               className="w-8 md:w-10 h-auto opacity-75 hover:opacity-100 transition-all duration-300"
-              style={{ 
+              style={{
                 filter: isLogoHovered ? 'brightness(0) invert(0.92)' : 'none'
               }}
             />
           </button>
-          
+
           {/* Animated name tag label "[ Sergio Alzate ]" below the logo (centered) */}
-          <span 
+          <span
             className="absolute left-1/2 top-full mt-2 font-mono text-[9px] md:text-xs text-zinc-400 tracking-wider whitespace-nowrap pointer-events-none transition-all duration-300 ease-out"
             style={{
               opacity: isLogoHovered ? 1 : 0,
@@ -1402,43 +947,6 @@ function App() {
         <div className="fixed inset-0 pointer-events-none z-[99] bg-scanlines opacity-30 mix-blend-overlay" />
       )}
 
-      {/* Dynamic Cursor Overlay */}
-      <motion.div
-        className={`fixed top-0 left-0 pointer-events-none z-[110] rounded-full flex items-center justify-center border hidden md:flex transition-[width,height,padding,min-width,border-color,background-color] duration-150 ${
-          cursorState === 'default'
-            ? 'w-4 h-4 bg-brand-orange border-brand-orange'
-            : cursorState === 'hovering'
-            ? 'px-4 h-20 min-w-20 bg-transparent border-brand-orange text-brand-orange whitespace-nowrap'
-            : 'w-44 h-44 bg-white border-white text-black mix-blend-difference'
-        }`}
-        style={{
-          x: cursorSpringX,
-          y: cursorSpringY,
-          translateX: '-50%',
-          translateY: '-50%',
-        }}
-      >
-        {cursorState === 'glitch' && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <svg viewBox="0 0 100 100" className="w-full h-full animate-[spin_10s_linear_infinite]">
-              <path
-                id="textCircle"
-                d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
-                fill="none"
-              />
-              <text className="font-mono text-[9px] font-black tracking-widest fill-black uppercase">
-                <textPath href="#textCircle" startOffset="0%">
-                  • WORK WITH SERGIO • WORK WITH SERGIO • WORK WITH SERGIO
-                </textPath>
-              </text>
-            </svg>
-          </div>
-        )}
-        {cursorState === 'hovering' && cursorLabel && (
-          <span className="font-mono text-[9px] uppercase tracking-widest font-black text-white">{cursorLabel}</span>
-        )}
-      </motion.div>
-
       {/* Global Glitch Orange Sticky Call-To-Action Banner */}
       {isGlitching && (
         <div className="fixed top-0 inset-x-0 bg-brand-orange border-b border-black text-black font-mono font-black py-4 px-6 z-[95] text-center tracking-widest text-sm select-none flex items-center justify-center gap-2 animate-[pulse_1s_infinite]">
@@ -1463,28 +971,28 @@ function App() {
               <button
                 onClick={() => {
                   playSound('click', isMuted);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setSelectedProject(null);
+                  window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+                  if (selectedProject) closeProject();
                 }}
                 className="block hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
               >
-                <img src={logo} alt="SA Logo" className="w-6 h-auto opacity-75" />
+                <GalleryMedia src={logo} width={145} height={158} alt="SA Logo" className="w-6 h-auto opacity-75" />
               </button>
             </div>
             <div className="font-mono text-xs font-bold tracking-widest md:pl-12">
               [ Sergio Alzate ]
             </div>
           </div>
-          
+
           {/* Real-time Grid Coordinates Telemetry HUD */}
           <div className="text-[10px] text-zinc-500 font-mono hidden md:block">
             GRID_COORD: X_{mousePos.x.toString().padStart(4, '0')} Y_{mousePos.y.toString().padStart(4, '0')}
           </div>
 
           <nav className="hidden md:flex items-center gap-4 sm:gap-8 font-mono text-xs uppercase tracking-wider">
-            <NavLink href="#work" label="Work" onHover={() => playSound('tick', isMuted)} />
-            <NavLink href="#about" label="About" onHover={() => playSound('tick', isMuted)} />
-            <NavLink href="#awards" label="Awards" onHover={() => playSound('tick', isMuted)} />
+            <NavLink href={selectedProject ? "/#work" : "#work"} label="Work" onHover={() => playSound('tick', isMuted)} />
+            <NavLink href={selectedProject ? "/#about" : "#about"} label="About" onHover={() => playSound('tick', isMuted)} />
+            <NavLink href={selectedProject ? "/#awards" : "#awards"} label="Awards" onHover={() => playSound('tick', isMuted)} />
             <button
               onClick={() => setIsMuted((m) => !m)}
               aria-label={isMuted ? 'Unmute interface sound' : 'Mute interface sound'}
@@ -1503,6 +1011,8 @@ function App() {
             }}
             className="md:hidden flex items-center justify-center w-8 h-8 border border-zinc-800 hover:border-brand-orange hover:text-brand-orange text-zinc-400 transition-colors cursor-pointer"
             aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-navigation"
           >
             {isMobileMenuOpen ? (
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -1520,6 +1030,7 @@ function App() {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
+              id="mobile-navigation"
               initial={{ opacity: 0, height: 0 }}
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
@@ -1527,8 +1038,8 @@ function App() {
               className="md:hidden w-full overflow-hidden bg-black border-t border-zinc-900 mt-2 z-50"
             >
               <div className="flex flex-col gap-3 py-3 px-2 font-mono text-xs uppercase tracking-wider">
-                <a 
-                  href="#work" 
+                <a
+                  href={selectedProject ? "/#work" : "#work"}
                   onClick={() => {
                     playSound('click', isMuted);
                     setIsMobileMenuOpen(false);
@@ -1537,8 +1048,8 @@ function App() {
                 >
                   Work
                 </a>
-                <a 
-                  href="#about" 
+                <a
+                  href={selectedProject ? "/#about" : "#about"}
                   onClick={() => {
                     playSound('click', isMuted);
                     setIsMobileMenuOpen(false);
@@ -1547,8 +1058,8 @@ function App() {
                 >
                   About
                 </a>
-                <a 
-                  href="#awards" 
+                <a
+                  href={selectedProject ? "/#awards" : "#awards"}
                   onClick={() => {
                     playSound('click', isMuted);
                     setIsMobileMenuOpen(false);
@@ -1594,32 +1105,18 @@ function App() {
       </header>
 
       {/* SECTION 1: HOME (Hero) */}
+      <main id="main-content">
       <section className="min-h-[90vh] flex flex-col md:flex-row relative">
         <Crosshair className="top-0 left-0" />
         <Crosshair className="bottom-0 left-0" />
-        
-        {/* Left splitting vertical line marquee typography */}
-        <div className={`w-full md:w-1/4 border-b md:border-b-0 md:border-r ${isGlitching ? 'border-black' : 'border-zinc-900'} flex items-center justify-center py-4 md:py-0 relative overflow-hidden`}>
-          {/* Horizontal Scrolling Marquee on Mobile */}
-          <div className="md:hidden w-full overflow-hidden select-none py-2 bg-zinc-950/20">
-            <div 
-              className="marquee-content flex whitespace-nowrap text-3xl font-black tracking-tighter text-stroke-white uppercase cursor-pointer magnetic-target"
-              data-cursor-label="ADVERTISING"
-              style={{
-                animation: 'marquee-scroll 15s linear infinite',
-              }}
-            >
-              <span>CREATIVE PORTFOLIO • CREATIVE PORTFOLIO • CREATIVE PORTFOLIO • </span>
-              <span>CREATIVE PORTFOLIO • CREATIVE PORTFOLIO • CREATIVE PORTFOLIO • </span>
-            </div>
-          </div>
-          {/* Vertical Marquee on Desktop */}
+
+        {/* Particle lettering keeps the existing vertical desktop layout. */}
+        <div className={`portfolio-particles-region w-full md:w-1/4 border-b md:border-b-0 md:border-r ${isGlitching ? 'border-black' : 'border-zinc-900'} relative overflow-hidden`}>
           <motion.div
-            style={{ y: heroMarqueeY, writingMode: 'vertical-rl' }}
-            className="hidden md:block md:rotate-180 text-center font-black tracking-tighter text-4xl md:text-5xl lg:text-6xl text-stroke-white select-none whitespace-nowrap py-4 cursor-pointer magnetic-target"
-            data-cursor-label="ADVERTISING"
+            style={{ y: prefersReducedMotion ? 0 : heroMarqueeY }}
+            className="portfolio-particle-motion"
           >
-            CREATIVE PORTFOLIO
+            <ParticleTitle reducedMotion={Boolean(prefersReducedMotion)} />
           </motion.div>
         </div>
 
@@ -1627,12 +1124,12 @@ function App() {
         <div className="flex-1 flex flex-col justify-center px-6 pt-10 pb-20 md:p-12 lg:p-24 relative">
           <Crosshair className="top-0 right-0" />
           <Crosshair className="bottom-0 right-0" />
-          
+
           <div className="max-w-4xl">
-            <motion.h1
+            <HeroHeading
               style={{
-                y: heroY,
-                opacity: heroOpacity,
+                y: prefersReducedMotion ? 0 : heroY,
+                opacity: prefersReducedMotion ? 1 : heroOpacity,
                 letterSpacing: 'var(--envy-letter-spacing, 0em)',
                 transform: 'skewX(var(--envy-skew, 0deg)) scaleX(var(--envy-scale-x, 1))',
                 transformOrigin: 'left center',
@@ -1644,7 +1141,7 @@ function App() {
             >
               SERGIO ALZATE<br />
               <span className="text-brand-orange select-all cursor-pointer magnetic-target" data-cursor-label="COPY WRITING BASED">// CREATIVE DIRECTOR.</span>
-            </motion.h1>
+            </HeroHeading>
             <div className="flex flex-col gap-4 max-w-xl font-mono text-sm leading-relaxed text-zinc-400 border-l border-brand-orange pl-4">
               <h2 className="font-black text-lg text-white uppercase tracking-tight font-mono">
                 PEOPLE WHO KNOW ME CALL ME SEARCH.
@@ -1654,10 +1151,10 @@ function App() {
               </p>
             </div>
           </div>
-          
+
           {/* Scroll Indicator — anchors down to SELECTED WORK */}
           <a
-            href="#work"
+            href={selectedProject ? "/#work" : "#work"}
             onClick={() => playSound('click', isMuted)}
             className="group/scroll absolute bottom-8 left-6 md:left-12 lg:left-24 flex items-center gap-3 font-mono text-[10px] text-zinc-500 hover:text-brand-orange tracking-widest select-none uppercase transition-colors duration-300"
           >
@@ -1671,21 +1168,21 @@ function App() {
       <section id="work" className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:pl-28 md:pr-12 relative`}>
         <Crosshair className="top-0 left-0" />
         <Crosshair className="top-0 right-0" />
-        
+
         <div className="max-w-7xl mx-auto">
           <div className="flex items-center gap-2 text-brand-orange mb-6 font-mono text-xs uppercase tracking-widest font-bold">
             <Folder className="w-4 h-4" />
             // SELECTED WORK
           </div>
-          <motion.div 
-            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+          <motion.div
+            initial={false}
             whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
             viewport={{ once: false, amount: 0.5 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center justify-between border-b border-zinc-900 pb-6 mb-16"
+            className="flex flex-col items-start gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-zinc-900 pb-6 mb-16"
           >
-            <h2 className="font-black text-5xl uppercase tracking-tighter">Selected Work</h2>
-            <div className="font-mono text-xs text-zinc-500 uppercase">[19 PROJECTS COMPILATION]</div>
+            <h2 className="font-black text-4xl sm:text-5xl uppercase tracking-tighter">Selected Work</h2>
+            <div className="font-mono text-xs text-zinc-500 uppercase">[{projects.length} PROJECTS COMPILATION]</div>
           </motion.div>
 
           {/* BENTO GRID — asymmetrical brutalist rectangles of varied sizes.
@@ -1698,10 +1195,12 @@ function App() {
               const span = BENTO_PATTERN[idx % BENTO_PATTERN.length];
 
               return (
-                <div
+                <a
+                  href={projectPath(project)}
+                  aria-label={`View ${project.title} for ${project.category.split(" // ")[0]}`}
                   key={project.id}
                   id={`project-${project.id}`}
-                  onClick={() => handleSelectProject(project)}
+                  onClick={(event) => handleSelectProject(project, event)}
                   onMouseEnter={() => playSound('tick', isMuted)}
                   style={{
                     boxShadow: `0 0 calc(${envIntensity} * 36px) rgba(206,254,70,calc(${envIntensity} * 0.55))`,
@@ -1760,11 +1259,11 @@ function App() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </a>
               );
             })}
           </div>
-          
+
           {/* Link to Behance under Selected Work */}
           <div className="mt-12 flex justify-center">
             <a
@@ -1782,17 +1281,17 @@ function App() {
       </section>
 
       {/* SECTION 3: ABOUT (System Status Resume) */}
-      <section 
-        id="about" 
+      <section
+        id="about"
         className={`border-t ${isGlitching ? 'border-black' : 'border-zinc-900'} py-24 px-6 md:pl-28 md:pr-12 relative w-full bg-black`}
       >
         <Crosshair className="top-0 left-0" />
         <Crosshair className="top-0 right-0" />
-        
+
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16">
           {/* Bio Column */}
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
+          <motion.div
+            initial={false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false, amount: 0.1 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -1803,7 +1302,7 @@ function App() {
                 <User className="w-4 h-4" />
                 // BIOGRAPHY
               </div>
-              
+
               {/* Neobrutalist Biography Image Widget */}
               {showSearchWidget && (
                 <div className="border-2 border-brand-orange bg-zinc-950 p-2 shadow-[6px_6px_0px_rgba(206,254,70,0.8)] relative group select-none mb-8 w-full max-w-[280px] animate-[fadeIn_0.3s_ease-out]">
@@ -1812,11 +1311,11 @@ function App() {
                   <div className="absolute top-[-2px] right-[-2px] w-2 h-2 bg-brand-orange" />
                   <div className="absolute bottom-[-2px] left-[-2px] w-2 h-2 bg-brand-orange" />
                   <div className="absolute bottom-[-2px] right-[-2px] w-2 h-2 bg-brand-orange" />
-                  
+
                   {/* HUD Header tag */}
                   <div className="flex justify-between items-center text-[8px] font-mono text-zinc-500 uppercase tracking-widest mb-1.5 border-b border-zinc-900 pb-1">
                     <span>ID: SERGIO_ALZATE</span>
-                    <button 
+                    <button
                       onClick={(e) => {
                         e.stopPropagation();
                         playSound('click', isMuted);
@@ -1828,18 +1327,18 @@ function App() {
                       ✕
                     </button>
                   </div>
-                  
+
                   {/* Image Container with Scanlines Overlay */}
                   <div className="relative overflow-hidden bg-black flex items-center justify-center border border-zinc-900 aspect-[3/4]">
                     {/* Subtle Scanlines */}
                     <div className="absolute inset-0 bg-scanlines opacity-10 pointer-events-none z-10" />
-                    
-                    <img 
-                      src={searchImage} 
-                      alt="Sergio Alzate Biography" 
+
+                    <GalleryMedia
+                      src={searchImage}
+                      alt="Sergio Alzate Biography"
                       className="w-full h-full object-cover grayscale opacity-90 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500"
                     />
-                    
+
                     {/* HUD overlay labels */}
                     <div className="absolute bottom-2 left-2 z-20 font-mono text-[7px] text-brand-orange bg-black/80 px-1 py-0.5 border border-brand-orange/30">
                       LATAM_GEO: CDMX
@@ -1862,7 +1361,7 @@ function App() {
                 </p>
               </div>
               <p className="font-mono text-xs text-brand-orange">
-                Contact: donsergio.alzatetorres(a)gmail.com
+                Contact: <a className="break-all underline underline-offset-4" href="mailto:donsergio.alzatetorres@gmail.com">donsergio.alzatetorres@gmail.com</a>
               </p>
             </div>
 
@@ -1885,7 +1384,7 @@ function App() {
               {EXPERIENCES.map((item, idx) => (
                 <motion.div
                   key={idx}
-                  initial={{ opacity: 0, y: 30 }}
+                  initial={false}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: false, amount: 0.1 }}
                   whileHover={{ scale: 1.02, y: -4 }}
@@ -1943,7 +1442,7 @@ function App() {
             // RECOGNITION DECK
           </div>
           <motion.h2
-            initial={{ clipPath: 'inset(0 100% 0 0)' }}
+            initial={false}
             whileInView={{ clipPath: 'inset(0 0% 0 0)' }}
             viewport={{ once: false, amount: 0.5 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
@@ -1955,7 +1454,7 @@ function App() {
             {AWARDS_DATA.reduce((n, f) => n + f.entries.length, 0)} RECOGNITIONS · {AWARDS_DATA.length} FESTIVALS
           </div>
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
+            initial={false}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: false, amount: 0.3 }}
             transition={{ duration: 0.8 }}
@@ -2001,12 +1500,12 @@ function App() {
             <button
               onClick={() => {
                 playSound('click', isMuted);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                setSelectedProject(null);
+                window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'instant' : 'smooth' });
+                if (selectedProject) closeProject();
               }}
               className="block hover:scale-110 active:scale-95 transition-all duration-300 cursor-pointer"
             >
-              <img src={logo} alt="SA Logo" className="w-8 h-auto opacity-75" />
+              <GalleryMedia src={logo} width={145} height={158} alt="SA Logo" className="w-8 h-auto opacity-75" />
             </button>
           </div>
           {/* Whatsapp Button */}
@@ -2061,10 +1560,51 @@ function App() {
           © 2026 SERGIO ALZATE. ALL WRONGS RESERVED.
         </div>
       </footer>
+      </main>
+
+      </div>
+      <div ref={dialogRef} role={selectedProject ? 'dialog' : undefined} aria-modal={selectedProject ? true : undefined} aria-labelledby={selectedProject ? 'project-title' : undefined} tabIndex={selectedProject ? -1 : undefined}>
+      {/* Dynamic Cursor Overlay */}
+      <motion.div
+        aria-hidden="true"
+        className={`custom-cursor fixed top-0 left-0 pointer-events-none z-[110] rounded-full flex items-center justify-center border hidden md:flex transition-[width,height,padding,min-width,border-color,background-color] duration-150 ${
+          cursorState === 'default'
+            ? 'w-4 h-4 bg-brand-orange border-brand-orange'
+            : cursorState === 'hovering'
+            ? 'px-4 h-20 min-w-20 bg-transparent border-brand-orange text-brand-orange whitespace-nowrap'
+            : 'w-44 h-44 bg-white border-white text-black mix-blend-difference'
+        }`}
+        style={{
+          x: cursorSpringX,
+          y: cursorSpringY,
+          translateX: '-50%',
+          translateY: '-50%',
+        }}
+      >
+        {cursorState === 'glitch' && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <svg viewBox="0 0 100 100" className="w-full h-full animate-[spin_10s_linear_infinite]">
+              <path
+                id="textCircle"
+                d="M 50, 50 m -35, 0 a 35,35 0 1,1 70,0 a 35,35 0 1,1 -70,0"
+                fill="none"
+              />
+              <text className="font-mono text-[9px] font-black tracking-widest fill-black uppercase">
+                <textPath href="#textCircle" startOffset="0%">
+                  • WORK WITH SERGIO • WORK WITH SERGIO • WORK WITH SERGIO
+                </textPath>
+              </text>
+            </svg>
+          </div>
+        )}
+        {cursorState === 'hovering' && cursorLabel && (
+          <span className="font-mono text-[9px] uppercase tracking-widest font-black text-white">{cursorLabel}</span>
+        )}
+      </motion.div>
 
       {/* Unified Envy-Meter Stacking Layout */}
       <div className="hidden md:flex fixed bottom-4 right-4 z-[100] flex-col gap-3 w-[280px] pointer-events-none">
-        
+
         {/* Onboarding Callout Banner (only visible offline, not active, not info open) */}
         {showExplanation && envyScore === null && !isScannerActive && !isWidgetInfoOpen && (
           <div className="pointer-events-auto bg-black border border-zinc-800 p-4 font-mono text-[10px] text-zinc-400 shadow-[4px_4px_0px_#27272a] select-none hover:border-brand-orange relative z-20 hidden md:block animate-[fadeIn_0.3s_ease-out]">
@@ -2074,7 +1614,7 @@ function App() {
             <div className="text-right text-brand-orange font-bold text-[9px] animate-[pulse_1.5s_infinite]">
               ACTIVATE ENVY SCANNER ↘
             </div>
-            
+
             {/* Hand-Drawn SVG Arrow pointing down to the scanner widget */}
             <svg
               className="absolute bottom-[-32px] right-10 w-12 h-12 text-brand-orange pointer-events-none"
@@ -2101,13 +1641,15 @@ function App() {
               </div>
             }
           >
-            <EnvyMeterWidget
+            {scannerRequested ? <EnvyMeterWidget
+              isMuted={isMuted}
+              activateOnMount
               onScoreChange={handleScoreChange}
               onActiveChange={setIsScannerActive}
               onInfoToggle={setIsWidgetInfoOpen}
               displayScoreOverride={selectedProject ? null : averageEnvyScore}
               projectId={selectedProject?.id ?? null}
-            />
+            /> : <ScannerLauncher isMuted={isMuted} onActivate={() => setScannerRequested(true)} />}
           </Suspense>
         </div>
 
@@ -2128,28 +1670,30 @@ function App() {
       <AnimatePresence>
       {selectedProject && (
         <motion.div
-          initial={{ opacity: 0 }}
+          initial={false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
+          ref={modalScrollRef}
           onScroll={handleModalScroll}
           className={`fixed inset-0 z-[90] overflow-y-auto font-mono p-6 md:p-12 lg:p-24 flex flex-col justify-start ${
             isGlitching ? 'glitch-flash text-black' : 'bg-black/95 text-white'
           }`}
         >
           <motion.div
-            initial={{ opacity: 0, y: 24, scale: 0.98 }}
+            initial={false}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 16, scale: 0.99 }}
             transition={{ duration: 0.32, ease: [0.16, 1, 0.3, 1] }}
             className="max-w-5xl mx-auto w-full">
+            <main aria-labelledby="project-title">
             {/* Modal Header */}
             <div className={`flex flex-col sm:flex-row sm:justify-between sm:items-start gap-6 border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} pb-6 mb-8`}>
               <div className="flex-grow">
                 <span className={`${isGlitching ? 'text-zinc-800' : 'text-zinc-500'} text-xs uppercase tracking-wider block`}>
                   {selectedProject.category} // {selectedProject.year}
                 </span>
-                <h2
+                <h1 id="project-title"
                   style={{
                     letterSpacing: 'var(--envy-letter-spacing, 0em)',
                     transform: 'skewX(var(--envy-skew, 0deg)) scaleX(var(--envy-scale-x, 1))',
@@ -2162,7 +1706,7 @@ function App() {
                   }`}
                 >
                   {selectedProject.title}
-                </h2>
+                </h1>
                 {projectPeaks[selectedProject.id] !== undefined && (
                   <div className="mt-4 flex items-center">
                     <span className={`px-2 py-1 font-mono font-bold text-[9px] uppercase tracking-widest pointer-events-none shadow-[2px_2px_0px_#ffffff] ${
@@ -2173,11 +1717,10 @@ function App() {
                   </div>
                 )}
               </div>
-              <button
-                onClick={() => {
-                  playSound('click', isMuted);
-                  setSelectedProject(null);
-                }}
+              <a
+                id="project-close"
+                href="/#work"
+                onClick={(event) => { event.preventDefault(); closeProject(); }}
                 className={`whitespace-nowrap flex-shrink-0 px-2 py-1 border transition-colors font-mono text-xs uppercase tracking-wider ${
                   isGlitching
                     ? 'bg-black text-white border-black hover:bg-white hover:text-black'
@@ -2185,9 +1728,17 @@ function App() {
                 } self-start sm:self-auto`}
               >
                 [ CLOSE ]
-              </button>
+              </a>
             </div>
 
+            <section aria-label="About this project" className="mb-8 border-l-2 border-brand-orange pl-4 text-sm leading-relaxed text-zinc-400">
+              <p>{selectedProject.description}</p>
+              <dl className="mt-4 flex flex-wrap gap-x-8 gap-y-2 text-xs">
+                <div><dt className="text-white font-bold">Client</dt><dd>{selectedProject.category.split(' // ')[0]}</dd></div>
+                <div><dt className="text-white font-bold">Discipline</dt><dd>{selectedProject.category.split(' // ')[1]}</dd></div>
+                <div><dt className="text-white font-bold">Year</dt><dd>{selectedProject.year}</dd></div>
+              </dl>
+            </section>
             {/* Unified Media Box (Gapless, Brutalist stack) */}
             {selectedProject.video || (selectedProject.images && selectedProject.images.length > 0) ? (
               <div className={`border ${isGlitching ? 'border-black' : 'border-zinc-800'} bg-zinc-950 overflow-hidden relative`}>
@@ -2198,30 +1749,31 @@ function App() {
                     {/* Dino 1.png */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Dino detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="On Negocios — The Chrome Dino campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Dino 2.png */}
                     {selectedProject.images?.[2] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Dino detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="On Negocios — The Chrome Dino campaign visual 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-[1280/880] w-full ${selectedProject.images && selectedProject.images.length > 3 ? `border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}` : ''} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-1`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2229,16 +1781,16 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* Dino 3.gif, Dino 4.gif, Dino 5.gif side-by-side (1 row of 3 columns) */}
                     {selectedProject.images && selectedProject.images.length > 3 && (
                       <div className={`grid grid-cols-3 divide-x ${isGlitching ? 'divide-black' : 'divide-zinc-800'}`}>
                         {selectedProject.images.slice(3, 6).map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`Dino detail ${idx + 3}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`On Negocios — The Chrome Dino campaign visual ${idx + 3}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
@@ -2251,19 +1803,20 @@ function App() {
                     {/* lo-fried_1.gif */}
                     {selectedProject.images?.[0] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[0]} 
-                          alt="Lo-Fried Beats detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[0]}
+                          alt="KFC — Lo-Fried Beats campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-2`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2271,39 +1824,40 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* lo-fried_2.png */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Lo-Fried Beats detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="KFC — Lo-Fried Beats campaign visual 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Spotify Embed Iframe */}
                     <div className={`w-full h-[152px] border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                      <iframe
+                      <RemoteVideo key={`${selectedProject.slug}-player-3`}
                         src="https://open.spotify.com/embed/album/0Dozl59DWjlDjMHx0pB4Ib?utm_source=generator"
+                        title="Lo Fried Beats — Spotify album"
                         width="100%"
                         height="152"
                         frameBorder="0"
                         allowFullScreen
-                        allow="autoplay; picture-in-picture"
+                        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                         sandbox="allow-same-origin allow-scripts allow-pointer-lock allow-forms allow-popups allow-popups-to-escape-sandbox"
                         className="w-full h-full border-0"
                       />
                     </div>
-                    
+
                     {/* lo-fried_3.png */}
                     {selectedProject.images?.[2] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Lo-Fried Beats detail 3" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="KFC — Lo-Fried Beats campaign visual 3"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2315,108 +1869,110 @@ function App() {
                     {/* Row 1: wintv_1.png */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="WinTV detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="WinTV — Entertainment + Soccer campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video 1: https://player.vimeo.com/video/1069358927 */}
                     <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                      <iframe
+                      <RemoteVideo key={`${selectedProject.slug}-player-4`}
                         src="https://player.vimeo.com/video/1069358927"
+                        poster={selectedProject.images?.[0]}
                         title="WinTV Video 1"
                         className="absolute inset-0 w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
                     </div>
-                    
+
                     {/* Row 2: Grid of wintv_2, wintv_3, wintv_4 (3 columns) */}
                     {selectedProject.images && selectedProject.images.length > 4 && (
                       <div className={`grid grid-cols-3 divide-x border-b ${isGlitching ? 'divide-black border-black' : 'divide-zinc-800 border-zinc-800'}`}>
                         {selectedProject.images.slice(2, 5).map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`WinTV detail ${idx + 2}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`WinTV — Entertainment + Soccer campaign visual ${idx + 2}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
                       </div>
                     )}
-                    
+
                     {/* Row 3: wintv_5.gif */}
                     {selectedProject.images?.[5] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[5]} 
-                          alt="WinTV detail 5" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[5]}
+                          alt="WinTV — Entertainment + Soccer campaign visual 5"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Row 4: wintv_6.png */}
                     {selectedProject.images?.[6] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[6]} 
-                          alt="WinTV detail 6" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[6]}
+                          alt="WinTV — Entertainment + Soccer campaign visual 6"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video 2: https://player.vimeo.com/video/1078828956 */}
                     <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                      <iframe
+                      <RemoteVideo key={`${selectedProject.slug}-player-5`}
                         src="https://player.vimeo.com/video/1078828956"
+                        poster={selectedProject.images?.[6]}
                         title="WinTV Video 2"
                         className="absolute inset-0 w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
                       />
                     </div>
-                    
+
                     {/* Row 5: Grid of wintv_7, wintv_8, wintv_9 (3 columns) */}
                     {selectedProject.images && selectedProject.images.length > 9 && (
                       <div className={`grid grid-cols-3 divide-x border-b ${isGlitching ? 'divide-black border-black' : 'divide-zinc-800 border-zinc-800'}`}>
                         {selectedProject.images.slice(7, 10).map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`WinTV detail ${idx + 7}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`WinTV — Entertainment + Soccer campaign visual ${idx + 7}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
                       </div>
                     )}
-                    
+
                     {/* Row 6: wintv_10.gif */}
                     {selectedProject.images?.[10] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[10]} 
-                          alt="WinTV detail 10" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[10]}
+                          alt="WinTV — Entertainment + Soccer campaign visual 10"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Row 7: Grid of wintv_11, wintv_12 (2 columns) */}
                     {selectedProject.images && selectedProject.images.length > 12 && (
                       <div className={`grid grid-cols-2 divide-x ${isGlitching ? 'divide-black' : 'divide-zinc-800'}`}>
                         {selectedProject.images.slice(11, 13).map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`WinTV detail ${idx + 11}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`WinTV — Entertainment + Soccer campaign visual ${idx + 11}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
@@ -2429,65 +1985,65 @@ function App() {
                     {/* openlate1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Open Late detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="KFC — Open Late print execution 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* openlate2 */}
                     {selectedProject.images?.[2] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Open Late detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="KFC — Open Late print execution 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* openlate3 (menu cover stored at index 0) */}
                     {selectedProject.images?.[0] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[0]} 
-                          alt="Open Late detail 3" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[0]}
+                          alt="KFC — Open Late print execution 3"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* openlate4 */}
                     {selectedProject.images?.[3] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[3]} 
-                          alt="Open Late detail 4" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[3]}
+                          alt="KFC — Open Late print execution 4"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* openlate5 */}
                     {selectedProject.images?.[4] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[4]} 
-                          alt="Open Late detail 5" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[4]}
+                          alt="KFC — Open Late print execution 5"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* openlate6 */}
                     {selectedProject.images?.[5] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[5]} 
-                          alt="Open Late detail 6" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[5]}
+                          alt="KFC — Open Late print execution 6"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2498,19 +2054,20 @@ function App() {
                     {/* Copa 1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Copa detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="Banco Pichincha — The Cheering Trophy campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Vimeo Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-6`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2518,14 +2075,14 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* Copa 2 */}
                     {selectedProject.images?.[2] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Copa detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="Banco Pichincha — The Cheering Trophy campaign visual 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2536,18 +2093,19 @@ function App() {
                     {/* dedos1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Dedos detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="Cheetos — Fingers Full of Fun campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video 1: https://player.vimeo.com/video/809990478 */}
                     <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                      <iframe
+                      <RemoteVideo key={`${selectedProject.slug}-player-7`}
                         src="https://player.vimeo.com/video/809990478"
+                        poster={selectedProject.images?.[0]}
                         title="Dedos Llenos Video 1"
                         className="absolute inset-0 w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2557,8 +2115,9 @@ function App() {
 
                     {/* Video 2: https://player.vimeo.com/video/1014369181 */}
                     <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                      <iframe
+                      <RemoteVideo key={`${selectedProject.slug}-player-8`}
                         src="https://player.vimeo.com/video/1014369181"
+                        poster={selectedProject.images?.[2]}
                         title="Dedos Llenos Video 2"
                         className="absolute inset-0 w-full h-full border-0"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2569,8 +2128,9 @@ function App() {
                     {/* Video 3 & 4 Row: Unequal Widths (7/12 and 5/12 split, scaling proportionally) */}
                     <div className={`flex divide-x border-b ${isGlitching ? 'divide-black border-black' : 'divide-zinc-800 border-zinc-800'}`}>
                       <div className="w-7/12 aspect-video relative overflow-hidden">
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-9`}
                           src="https://player.vimeo.com/video/845815102"
+                          poster={selectedProject.images?.[3]}
                           title="Dedos Llenos Video 3"
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2578,8 +2138,9 @@ function App() {
                         />
                       </div>
                       <div className="w-5/12 relative overflow-hidden bg-zinc-950">
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-10`}
                           src="https://player.vimeo.com/video/845815773"
+                          poster={selectedProject.images?.[4]}
                           title="Dedos Llenos Video 4"
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2593,26 +2154,26 @@ function App() {
                       <div className={`grid grid-cols-3 divide-x ${isGlitching ? 'divide-black' : 'divide-zinc-800'}`}>
                         {/* dedos2 */}
                         <div className="relative">
-                          <img 
-                            src={selectedProject.images[0]} 
-                            alt="Dedos detail 2" 
-                            className="w-full h-auto object-cover" 
+                          <GalleryMedia
+                            src={selectedProject.images[0]}
+                            alt="Cheetos — Fingers Full of Fun campaign visual 2"
+                            className="w-full h-auto object-cover"
                           />
                         </div>
                         {/* dedos3 */}
                         <div className="relative">
-                          <img 
-                            src={selectedProject.images[2]} 
-                            alt="Dedos detail 3" 
-                            className="w-full h-auto object-cover" 
+                          <GalleryMedia
+                            src={selectedProject.images[2]}
+                            alt="Cheetos — Fingers Full of Fun campaign visual 3"
+                            className="w-full h-auto object-cover"
                           />
                         </div>
                         {/* dedos4 */}
                         <div className="relative">
-                          <img 
-                            src={selectedProject.images[3]} 
-                            alt="Dedos detail 4" 
-                            className="w-full h-auto object-cover" 
+                          <GalleryMedia
+                            src={selectedProject.images[3]}
+                            alt="Cheetos — Fingers Full of Fun campaign visual 4"
+                            className="w-full h-auto object-cover"
                           />
                         </div>
                       </div>
@@ -2624,76 +2185,76 @@ function App() {
                     {/* sun1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Sunstats detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="KFC — Sun Stats print execution 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun2 (menu cover stored at index 0) */}
                     {selectedProject.images?.[0] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[0]} 
-                          alt="Sunstats detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[0]}
+                          alt="KFC — Sun Stats print execution 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun3 */}
                     {selectedProject.images?.[2] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Sunstats detail 3" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="KFC — Sun Stats print execution 3"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun4 */}
                     {selectedProject.images?.[3] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[3]} 
-                          alt="Sunstats detail 4" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[3]}
+                          alt="KFC — Sun Stats print execution 4"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun5 */}
                     {selectedProject.images?.[4] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[4]} 
-                          alt="Sunstats detail 5" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[4]}
+                          alt="KFC — Sun Stats print execution 5"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun6 */}
                     {selectedProject.images?.[5] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[5]} 
-                          alt="Sunstats detail 6" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[5]}
+                          alt="KFC — Sun Stats print execution 6"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* sun7 */}
                     {selectedProject.images?.[6] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[6]} 
-                          alt="Sunstats detail 7" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[6]}
+                          alt="KFC — Sun Stats print execution 7"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2704,19 +2265,20 @@ function App() {
                     {/* exorcist1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Exorcist detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="Win — Exorcist campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-[356/240] w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-11`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2724,29 +2286,29 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* exorcist2, exorcist3, exorcist4 side-by-side (1 row of 3 columns) */}
                     {selectedProject.images && selectedProject.images.length > 4 && (
                       <div className={`grid grid-cols-3 divide-x border-b ${isGlitching ? 'divide-black border-black' : 'divide-zinc-800 border-zinc-800'}`}>
                         {selectedProject.images.slice(2, 5).map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`Exorcist detail ${idx + 2}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`Win — Exorcist campaign visual ${idx + 2}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
                       </div>
                     )}
-                    
+
                     {/* exorcist5 */}
                     {selectedProject.images?.[5] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[5]} 
-                          alt="Exorcist detail 5" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[5]}
+                          alt="Win — Exorcist campaign visual 5"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2757,19 +2319,20 @@ function App() {
                     {/* muvid1 */}
                     {selectedProject.images?.[1] && (
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-                        <img 
-                          src={selectedProject.images[1]} 
-                          alt="Muvid detail 1" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[1]}
+                          alt="Win — Music Video Festival campaign visual 1"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
-                    
+
                     {/* Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-video w-full border-b ${isGlitching ? 'border-black' : 'border-zinc-800'} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-12`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2777,14 +2340,14 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* muvid2 */}
                     {selectedProject.images?.[2] && (
                       <div className="relative">
-                        <img 
-                          src={selectedProject.images[2]} 
-                          alt="Muvid detail 2" 
-                          className="w-full h-auto object-cover" 
+                        <GalleryMedia
+                          src={selectedProject.images[2]}
+                          alt="Win — Music Video Festival campaign visual 2"
+                          className="w-full h-auto object-cover"
                         />
                       </div>
                     )}
@@ -2795,8 +2358,9 @@ function App() {
                     {/* Video Player */}
                     {selectedProject.video && (
                       <div className={`aspect-video w-full ${selectedProject.images && selectedProject.images.length > 0 ? `border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}` : ''} relative overflow-hidden`}>
-                        <iframe
+                        <RemoteVideo key={`${selectedProject.slug}-player-13`}
                           src={selectedProject.video}
+                          poster={selectedProject.images?.[0]}
                           title={selectedProject.title}
                           className="absolute inset-0 w-full h-full border-0"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -2804,16 +2368,16 @@ function App() {
                         />
                       </div>
                     )}
-                    
+
                     {/* Images Gallery */}
                     {selectedProject.images && selectedProject.images.length > 0 && (
                       <div className={`flex flex-col divide-y ${isGlitching ? 'divide-black' : 'divide-zinc-800'}`}>
                         {selectedProject.images.map((img, idx) => (
                           <div key={idx} className="relative">
-                            <img 
-                              src={img} 
-                              alt={`${selectedProject.title} detail ${idx + 1}`} 
-                              className="w-full h-auto object-cover" 
+                            <GalleryMedia
+                              src={img}
+                              alt={`${selectedProject.title} detail ${idx + 1}`}
+                              className="w-full h-auto object-cover"
                             />
                           </div>
                         ))}
@@ -2827,38 +2391,39 @@ function App() {
                 [ No media assets found for this project ]
               </div>
             )}
-            
+
             {/* Project Navigation Footer */}
             <div className={`mt-24 pt-12 border-t ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
-              
+
               {/* Storyboard Filmstrip Carousel Menu */}
               <div className="mb-16">
                 <div className="flex justify-between items-center font-mono text-[10px] text-zinc-500 uppercase tracking-widest mb-6 border-b border-zinc-800 pb-2">
-                  <span>// CHAPTER SELECTOR: STORYBOARDS STRIP [19 CAMPAIGNS]</span>
+                  <span>// CHAPTER SELECTOR: STORYBOARDS STRIP [{projects.length} CAMPAIGNS]</span>
                   <span className="text-brand-orange text-[8px] animate-pulse">← SCROLL HORIZONTALLY TO EXPLORE →</span>
                 </div>
-                
+
                 <div className="flex gap-4 overflow-x-auto pb-6 pt-2 scroll-smooth snap-x scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-950">
                   {projects.map((proj, idx) => {
                     const isActive = proj.id === selectedProject.id;
                     const coverImage = proj.images && proj.images.length > 0 ? proj.images[0] : null;
-                    
+
                     return (
-                      <button
+                      <a
+                        href={projectPath(proj)}
                         key={proj.id}
-                        onClick={() => handleSelectProject(proj)}
+                        onClick={(event) => handleSelectProject(proj, event)}
                         className={`snap-start flex-shrink-0 w-48 md:w-56 aspect-[16/10] relative overflow-hidden border text-left transition-all duration-300 group/strip ${
-                          isActive 
-                            ? 'border-brand-orange ring-1 ring-brand-orange' 
+                          isActive
+                            ? 'border-brand-orange ring-1 ring-brand-orange'
                             : 'border-zinc-800 hover:border-zinc-500'
                         }`}
                       >
                         {/* Cover Image or Fallback */}
                         <div className="absolute inset-0 z-0 scale-100 group-hover/strip:scale-105 transition-transform duration-500 ease-out">
                           {coverImage ? (
-                            <img 
-                              src={coverImage} 
-                              alt={proj.title} 
+                            <GalleryMedia
+                              src={coverImage}
+                              alt=""
                               className={`w-full h-full object-cover grayscale transition-all duration-500 group-hover/strip:grayscale-0 ${
                                 isActive ? 'grayscale-0' : 'opacity-60 group-hover/strip:opacity-90'
                               }`}
@@ -2897,7 +2462,7 @@ function App() {
                             </p>
                           </div>
                         </div>
-                      </button>
+                      </a>
                     );
                   })}
                 </div>
@@ -2918,11 +2483,9 @@ function App() {
             </div>
 
             <div className={`mt-16 pt-8 border-t ${isGlitching ? 'border-black' : 'border-zinc-800'} flex justify-center`}>
-              <button
-                onClick={() => {
-                  playSound('click', isMuted);
-                  setSelectedProject(null);
-                }}
+              <a
+                href="/#work"
+                onClick={(event) => { event.preventDefault(); closeProject(); }}
                 className={`whitespace-nowrap px-6 py-3 font-mono text-sm uppercase tracking-widest border transition-colors ${
                   isGlitching
                     ? 'bg-black text-white border-black hover:bg-white hover:text-black'
@@ -2930,13 +2493,16 @@ function App() {
                 }`}
               >
                 [ RETURN TO PORTFOLIO ]
-              </button>
+              </a>
             </div>
+            </main>
           </motion.div>
         </motion.div>
       )}
       </AnimatePresence>
+      </div>
     </div>
+    </MotionConfig>
   );
 }
 

@@ -1,12 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useId } from 'react';
 import { useSpring, useMotionValue, motion, AnimatePresence } from 'framer-motion';
 import { Camera, Eye, EyeOff, Loader2, AlertTriangle } from 'lucide-react';
 import { useEnvyScanner } from '../hooks/useEnvyScanner';
 
 import { playSound } from '../services/sound';
-import { EnvyEngine } from '../services/EnvyEngine';
 
 interface EnvyMeterWidgetProps {
+  isMuted: boolean;
+  activateOnMount?: boolean;
   onScoreChange?: (score: number | null) => void;
   onActiveChange?: (isActive: boolean) => void;
   onInfoToggle?: (isOpen: boolean) => void;
@@ -15,19 +16,18 @@ interface EnvyMeterWidgetProps {
 }
 
 export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
+  isMuted,
+  activateOnMount = false,
   onScoreChange,
   onActiveChange,
   onInfoToggle,
   displayScoreOverride,
   projectId,
 }) => {
+  const infoId = useId();
   const [showInfo, setShowInfo] = useState(false);
 
   const [sensitivity] = useState(4);
-
-  useEffect(() => {
-    EnvyEngine.getInstance().setSensitivity(sensitivity);
-  }, [sensitivity]);
 
   const {
     stream,
@@ -45,7 +45,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
     error,
     startScanner,
     stopScanner,
-  } = useEnvyScanner(projectId);
+  } = useEnvyScanner(projectId, sensitivity);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -60,10 +60,10 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
 
   // Sync internal/external scores
   useEffect(() => {
-    const activeScore = displayScoreOverride !== undefined && displayScoreOverride !== null 
-      ? displayScoreOverride 
+    const activeScore = displayScoreOverride !== undefined && displayScoreOverride !== null
+      ? displayScoreOverride
       : envyScore;
-      
+
     if (activeScore !== null) {
       motionScore.set(activeScore);
     }
@@ -99,23 +99,22 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
     }
   }, [envyScore, isCameraActive]);
 
-  // Auto-activate camera peripheral if developer query parameter is present
+  const autoStarted = useRef(false);
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('autoActivateScanner') === 'true') {
-      const timer = setTimeout(() => {
-        startScanner();
-      }, 500);
-      return () => clearTimeout(timer);
-    }
-  }, [startScanner]);
+    if (!activateOnMount || autoStarted.current) return;
+    const timer = setTimeout(() => {
+      autoStarted.current = true;
+      void startScanner();
+    }, 50);
+    return () => clearTimeout(timer);
+  }, [activateOnMount, startScanner]);
 
   useEffect(() => {
     const unsubscribe = springScore.on('change', (latest) => {
-      const activeScore = displayScoreOverride !== undefined && displayScoreOverride !== null 
-        ? displayScoreOverride 
+      const activeScore = displayScoreOverride !== undefined && displayScoreOverride !== null
+        ? displayScoreOverride
         : envyScore;
-        
+
       if (spanRef.current && activeScore !== null) {
         spanRef.current.textContent = latest.toFixed(1);
       }
@@ -280,7 +279,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
     if (memory) {
       return `${Math.round(memory.usedJSHeapSize / 1024 / 1024)}MB`;
     }
-    return '14.2MB';
+    return 'Not available';
   };
 
   return (
@@ -293,7 +292,10 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.2 }}
-            className="absolute inset-0 bg-black/95 z-50 p-4 flex flex-col justify-between border border-brand-orange/40 font-mono text-[9px] leading-relaxed text-zinc-300"
+            id={infoId}
+            role="region"
+            aria-label="About the envy scanner"
+            className="absolute bottom-0 inset-x-0 max-h-[calc(100dvh-2rem)] overflow-y-auto bg-black/95 z-50 p-4 flex flex-col gap-3 border border-brand-orange/40 font-mono text-[9px] leading-relaxed text-zinc-300"
           >
             <div>
               <div className="flex items-center justify-between border-b border-brand-orange/30 pb-1 mb-2">
@@ -302,9 +304,10 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
                 </span>
                 <button
                   onClick={() => {
-                    playSound('click', false);
+                    playSound('click', isMuted);
                     setShowInfo(false);
                   }}
+                  aria-label="Close scanner information"
                   className="text-zinc-500 hover:text-brand-orange font-black text-xs px-1 cursor-pointer"
                 >
                   ×
@@ -312,10 +315,10 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
               </div>
               <div className="space-y-2 text-zinc-400 overflow-y-auto max-h-[220px]">
                 <p>
-                  <strong className="text-white">1. FACIAL SCANNING:</strong> Using your local webcam, we analyze 468 facial vector points securely without storing or transmitting images.
+                  <strong className="text-white">1. FACIAL SCANNING:</strong> Using your local webcam, we process facial landmarks locally without storing or transmitting images.
                 </p>
                 <p>
-                  <strong className="text-white">2. FACS METRIC:</strong> We detect signs of professional jealousy: brow furrowing (Frustration), tense smiling (Fake Smile), corner depression (Disapproval), and physical proximity (Leaning).
+                  <strong className="text-white">2. FACS METRIC:</strong> This interactive experiment turns facial expressions and viewing time into a playful score: brow furrowing (Frustration), tense smiling (Fake Smile), corner depression (Disapproval), and physical proximity (Leaning).
                 </p>
                 <p>
                   <strong className="text-white">3. DAMPENING:</strong> Genuine joy (Genuine Smile) instantly lowers the calculated envy level.
@@ -327,7 +330,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
             </div>
             <button
               onClick={() => {
-                playSound('click', false);
+                playSound('click', isMuted);
                 setShowInfo(false);
               }}
               className="w-full mt-3 py-1 bg-brand-orange text-black font-bold uppercase tracking-widest text-[8px] border border-brand-orange hover:bg-black hover:text-brand-orange transition-colors cursor-pointer"
@@ -348,11 +351,14 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
           <button
             onClick={(e) => {
               e.stopPropagation();
-              playSound('click', false);
+              playSound('click', isMuted);
               setShowInfo((prev) => !prev);
             }}
             className="w-5.5 h-4.5 rounded-full border border-zinc-850 hover:border-brand-orange hover:text-brand-orange flex items-center justify-center font-mono text-[9px] font-bold text-zinc-500 transition-colors shrink-0 cursor-pointer"
             title="Algorithm Info"
+            aria-label="About the envy scanner"
+            aria-expanded={showInfo}
+            aria-controls={infoId}
           >
             ii
           </button>
@@ -454,17 +460,17 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
             <div className="flex justify-between text-[8px] text-zinc-400 uppercase tracking-widest mb-1 font-bold">
               <span>{displayScoreOverride !== undefined && displayScoreOverride !== null ? 'Average Envy Index' : 'Envy Algorithm'}</span>
               <span className="text-brand-orange">
-                {displayScoreOverride !== undefined && displayScoreOverride !== null 
-                  ? `${displayScoreOverride.toFixed(1)}/10.0` 
-                  : envyScore !== null 
-                    ? `${envyScore.toFixed(1)}/10.0` 
+                {displayScoreOverride !== undefined && displayScoreOverride !== null
+                  ? `${displayScoreOverride.toFixed(1)}/10.0`
+                  : envyScore !== null
+                    ? `${envyScore.toFixed(1)}/10.0`
                     : '--'}
               </span>
             </div>
             <div className="w-full h-1.5 bg-zinc-900 border border-zinc-800 overflow-hidden">
               {(() => {
-                const activeVal = displayScoreOverride !== undefined && displayScoreOverride !== null 
-                  ? displayScoreOverride 
+                const activeVal = displayScoreOverride !== undefined && displayScoreOverride !== null
+                  ? displayScoreOverride
                   : envyScore;
                 return (
                   <div
@@ -496,7 +502,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
       {isCameraActive ? (
         <button
           onClick={() => {
-            playSound('click', false);
+            playSound('click', isMuted);
             stopScanner();
           }}
           className="w-full py-1.5 bg-zinc-900 border border-zinc-800 hover:bg-brand-orange hover:text-black hover:border-brand-orange transition-all duration-300 font-bold tracking-widest uppercase text-[9px] flex items-center justify-center gap-2 active:translate-y-[1px]"
@@ -507,7 +513,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
       ) : (
         <button
           onClick={() => {
-            playSound('click', false);
+            playSound('click', isMuted);
             startScanner();
           }}
           disabled={isLoadingModel}
@@ -527,6 +533,8 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
         </button>
       )}
 
+      {error && <div role="alert" className="mt-3 border border-red-500/40 p-2 text-xs leading-relaxed text-red-400">{error} You can retry or continue browsing without the scanner.</div>}
+
       {/* Technical Log Console with Telemetry Data */}
       {(isLoadingModel || isCameraActive) && (
         <div className="mt-2 text-[8px] text-zinc-500 bg-zinc-950 p-2 border border-zinc-900 h-16 overflow-y-auto leading-normal">
@@ -534,7 +542,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
           {isLoadingModel && <div>&gt; downloading assets: {modelProgress}</div>}
           {isCameraActive && (
             <>
-              <div>&gt; WASM Threads: 4 | GPU Delegate: ACTIVE</div>
+              <div>&gt; Local video processing | Model loaded</div>
               <div>&gt; JS Memory Heap: {getMemoryUsage()}</div>
               <div>
                 &gt; Eye Blinks: {blinkCount} | Rate: {blinkRate}/min
@@ -549,7 +557,7 @@ export const EnvyMeterWidget: React.FC<EnvyMeterWidgetProps> = ({
               )}
             </>
           )}
-          {error && <div className="text-red-500">&gt; error: {error}</div>}
+
         </div>
       )}
     </div>

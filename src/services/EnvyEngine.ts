@@ -117,15 +117,17 @@ export class EnvyEngine {
       while (this.isInitializing) {
         await new Promise((resolve) => setTimeout(resolve, 100));
       }
+      if (!this.faceLandmarker) throw new Error('Facial model initialization failed. Please retry.');
       return;
     }
 
     this.isInitializing = true;
 
+    let modelObjectUrl: string | undefined;
     try {
       if (onProgress) onProgress('Initializing system WASM resolver...');
       const filesetResolver = await FilesetResolver.forVisionTasks(
-        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.8/wasm',
+        'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.35/wasm',
       );
 
       const modelUrl =
@@ -148,7 +150,8 @@ export class EnvyEngine {
 
           if (cachedResponse) {
             const blob = await cachedResponse.blob();
-            modelAssetSource = URL.createObjectURL(blob);
+            modelObjectUrl = URL.createObjectURL(blob);
+            modelAssetSource = modelObjectUrl;
           }
         } catch (cacheError) {
           console.warn('Local cache storage failed. Falling back to direct URL resolver:', cacheError);
@@ -173,6 +176,7 @@ export class EnvyEngine {
       this.isInitializing = false;
       throw error;
     } finally {
+      if (modelObjectUrl) URL.revokeObjectURL(modelObjectUrl);
       this.isInitializing = false;
     }
   }

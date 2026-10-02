@@ -259,3 +259,5 @@ for (let i = 0; i < 60; i++) {
 console.log('==========================================');
 console.log(failures === 0 ? '✅ ALL ALGORITHMIC TESTS PASSED' : `❌ ${failures} TEST(S) FAILED`);
 console.log('==========================================');
+
+if (failures > 0) throw new Error(`${failures} algorithmic tests failed`);
