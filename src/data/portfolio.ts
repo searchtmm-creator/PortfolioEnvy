@@ -197,14 +197,14 @@ export interface Festival {
 // Editorial priority for this portfolio: international festivals, regional and
 // national awards, then jury participation, publications and other recognitions.
 // Within each festival: metals first, then shortlist, mention, jury and features;
-// the most recent year leads within each level. Keep repeated entries intact.
+// the most recent year leads within each level. Young Lions closes Cannes Lions.
+// Keep repeated entries intact.
 export const AWARDS_DATA: Festival[] = [
   {
     name: 'Cannes Lions',
     location: 'GLOBAL',
     entries: [
       { year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' },
-      { year: '2013', result: 'Bronze — Print / Young Lions Ecuador', tier: 'bronze' },
       { year: '2019', result: 'Shortlist — Radio & Audio / The Cheering Trophy', tier: 'shortlist' },
       { year: '2019', result: 'Shortlist — Radio & Audio / The Cheering Trophy', tier: 'shortlist' },
       { year: '2017', result: 'Shortlist — Media / Revealing Light', tier: 'shortlist' },
@@ -212,6 +212,7 @@ export const AWARDS_DATA: Festival[] = [
       { year: '2016', result: 'Shortlist — Media / Missing Tag', tier: 'shortlist' },
       { year: '2021', result: 'Jury — Future Lions', tier: 'jury' },
       { year: '2021', result: 'Exhibition — ACT Responsible’s Great Ads', tier: 'feature' },
+      { year: '2013', result: 'Bronze — Print / Young Lions Ecuador', tier: 'bronze' },
     ],
   },
   {
