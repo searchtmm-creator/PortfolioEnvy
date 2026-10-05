@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useId, useCallback, Suspense } from
 import { useScroll, useVelocity, motion, useTransform, useMotionValue, useSpring, AnimatePresence, MotionConfig, useReducedMotion } from 'framer-motion';
 import { Award, User, Briefcase, Folder, ArrowDown } from 'lucide-react';
 import { playSound } from './services/sound';
+import { ProjectStory } from './components/ProjectStory';
+import { BrandLogos } from './components/BrandLogos';
 import { projects, AWARDS_DATA, EXPERIENCES, logo, searchImage, type Festival, type Tier } from './data/portfolio';
 import { GalleryMedia, RemoteVideo } from './components/ProjectMedia';
 import { ScannerLauncher } from './components/ScannerLauncher';
@@ -259,7 +261,8 @@ const ProjectThumbnail: React.FC<{ id: number }> = ({ id }) => {
   );
 };
 
-// In `bw` mode the art renders in black & white and bursts into colour on hover.
+// Monochrome previews reveal colour on desktop hover or keyboard focus;
+// mobile and touch devices show the original artwork immediately.
 const ProjectMedia: React.FC<{ id: number; image?: string; bw?: boolean }> = ({
   id,
   image,
@@ -268,7 +271,7 @@ const ProjectMedia: React.FC<{ id: number; image?: string; bw?: boolean }> = ({
   const [failed, setFailed] = useState(false);
   const showImage = image && !failed;
   const imgClass = `absolute inset-0 w-full h-full object-cover transition-all duration-500 ${
-    bw ? 'filter grayscale group-hover:grayscale-0' : ''
+    bw ? 'project-cover-monochrome' : ''
   }`;
   return (
     <div className="relative w-full h-full bg-zinc-950">
@@ -1208,7 +1211,7 @@ function App({ initialPath }: { initialPath?: string }) {
                   }}
                   className={`group relative cursor-pointer overflow-hidden border border-zinc-900 hover:border-brand-orange transition-all duration-500 ${span}`}
                 >
-                  {/* Full-bleed B&W media — colour reveals only on hover */}
+                  {/* Original colour on mobile; monochrome reveal on desktop. */}
                   <div className="absolute inset-0 w-full h-full">
                     <ProjectMedia id={project.id} image={project.images?.[0]} bw />
                   </div>
@@ -1216,8 +1219,8 @@ function App({ initialPath }: { initialPath?: string }) {
                   {/* Brutalist offset shadow block (slides in on hover) */}
                   <div className="absolute inset-0 translate-x-2 translate-y-2 bg-brand-orange opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
 
-                  {/* Readability tint — clears slightly on hover so colour pops */}
-                  <div className="absolute inset-0 bg-black/55 group-hover:bg-black/25 transition-colors duration-500 z-10" />
+                  {/* Keep the artwork clear; shade only the title area. */}
+                  <div aria-hidden="true" className="project-card-shade absolute inset-x-0 bottom-0 z-10 pointer-events-none" />
 
                   {/* Target lock-on brackets on Hover */}
                   <div className="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
@@ -1357,6 +1360,9 @@ function App({ initialPath }: { initialPath?: string }) {
                   I studied visual arts and a few things related to communication, literature and technology. I've been fortunate to work in several Latin American countries like Argentina, Brazil, Chile, Ecuador, Peru and now Mexico.
                 </p>
                 <p>
+                  My work has been recognized and exhibited at the Contemporary Art Center of Quito. I also have an urban music production company.
+                </p>
+                <p>
                   My nickname, "Search," comes from my friend Molinitas, who says I'm the best at googling. As a nerd, I have no doubt that machines will rule the world, I just hope they are the coffee-making ones.
                 </p>
               </div>
@@ -1393,7 +1399,7 @@ function App({ initialPath }: { initialPath?: string }) {
                 >
                   {/* Top Header Row */}
                   <div className="border-b border-zinc-800 px-3 py-2 flex justify-between font-black text-[9px] md:text-[10px] text-zinc-400 transition-colors duration-300">
-                    <span>EXPERIENCE RECORD // CD.01.{idx.toString().padStart(2, '0')}</span>
+                    <span>EXPERIENCE RECORD</span>
                     <span className="text-brand-orange font-bold">EST. {item.period}</span>
                   </div>
 
@@ -1460,7 +1466,7 @@ function App({ initialPath }: { initialPath?: string }) {
             transition={{ duration: 0.8 }}
             className="max-w-3xl text-zinc-400 font-mono text-xs md:text-sm leading-relaxed mb-16 border-l-2 border-brand-orange pl-6 select-none"
           >
-            Here’s the thing: there are a bunch of us creatives who don’t really care about awards or recognition. I’ve got over 90 of those “I don’t care about” awards, and I made sure to write them down with the date, celebrate them by dancing, post about them on all my socials… and even called my mom excited to tell her I won.
+            Here’s the thing: there are a bunch of us creatives who don’t really care about awards or recognition. I’ve won over 100 of those “I don’t care about” awards, and I made sure to write them down with the date, celebrate them by dancing, post about them on all my socials… and even called my mom excited to tell her I won.
           </motion.div>
 
           {/* Awards — collapsible accordions grouped by festival */}
@@ -1476,6 +1482,8 @@ function App({ initialPath }: { initialPath?: string }) {
           </div>
         </div>
       </section>
+
+      <BrandLogos />
 
       {/* Bottom Moving Marquee (Cenefa en movimiento) — speeds up + glows with envy */}
       <div className={`marquee-container border-t border-b ${isGlitching ? 'border-black' : 'border-zinc-900'} bg-zinc-950 py-4 overflow-hidden select-none`}>
@@ -1742,7 +1750,9 @@ function App({ initialPath }: { initialPath?: string }) {
             {/* Unified Media Box (Gapless, Brutalist stack) */}
             {selectedProject.video || (selectedProject.images && selectedProject.images.length > 0) ? (
               <div className={`border ${isGlitching ? 'border-black' : 'border-zinc-800'} bg-zinc-950 overflow-hidden relative`}>
-                {selectedProject.id === 18 || selectedProject.slug === 'dino-on-negocios' ? (
+                {selectedProject.media ? (
+                  <ProjectStory project={selectedProject} isGlitching={isGlitching} />
+                ) : selectedProject.id === 18 || selectedProject.slug === 'dino-on-negocios' ? (
                   /* Custom Layout for Dino Project */
                   <div className="flex flex-col">
 
@@ -2321,7 +2331,7 @@ function App({ initialPath }: { initialPath?: string }) {
                       <div className={`border-b ${isGlitching ? 'border-black' : 'border-zinc-800'}`}>
                         <GalleryMedia
                           src={selectedProject.images[1]}
-                          alt="Win — Music Video Festival campaign visual 1"
+                          alt="MUVID — Music Video Festival film visual 1"
                           className="w-full h-auto object-cover"
                         />
                       </div>
@@ -2346,7 +2356,7 @@ function App({ initialPath }: { initialPath?: string }) {
                       <div className="relative">
                         <GalleryMedia
                           src={selectedProject.images[2]}
-                          alt="Win — Music Video Festival campaign visual 2"
+                          alt="MUVID — Music Video Festival film visual 2"
                           className="w-full h-auto object-cover"
                         />
                       </div>

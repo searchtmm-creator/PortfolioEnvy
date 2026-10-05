@@ -1,16 +1,16 @@
 PORTFOLIO DE SERGIO ALZATE — CORRECCIONES Y SEO
-2 de octubre de 2026
+Actualizado el 4 de octubre de 2026
 Objetivo: reclutadores y búsquedas por el nombre Sergio Alzate.
 
 IMPLEMENTADO
-01. Nueve casos con URL /work/<slug>/, enlaces nativos, recarga y navegación Atrás/Adelante.
+01. Doce casos con URL /work/<slug>/, enlaces nativos, recarga y navegación Atrás/Adelante.
 02. Eliminado el rewrite global: Vercel publica archivos estáticos; las rutas desconocidas reciben 404.html con estado 404.
-03. robots.txt válido y sitemap.xml generado en cada build con las diez páginas públicas.
+03. robots.txt válido y sitemap.xml generado en cada build con las trece páginas públicas.
 04. Tarjetas operables con Tab/Enter y enlaces que conservan apertura en otra pestaña.
 05. Diálogo etiquetado, fondo oculto e inert, foco contenido, Escape, restauración del foco y posición de la portada.
 06. Encabezados visibles antes de JavaScript; eliminada la animación que los recortaba completamente.
 07. Encabezado y contador adaptables desde 320 px.
-08. Contadores derivados de los nueve proyectos, incluida la navegación entre casos.
+08. Contadores derivados de los doce proyectos, incluida la navegación entre casos.
 09. GIF convertidos a MP4 H.264, portadas estáticas y fotografías en WebP. Originales conservados.
 10. Imágenes con dimensiones, carga diferida y reserva de espacio; clips del layout con poster, reproducción automática en bucle sin controles, silencio y pausa al salir de pantalla. Vimeo se carga por interacción; Spotify muestra directamente su iframe original al abrir Lo Fried Beats.
 11. Motor de MediaPipe y widget en chunks separados, descargados al activar el escáner. JS/WASM alineados a 0.10.35.
@@ -22,6 +22,8 @@ IMPLEMENTADO
 CAMBIOS ADICIONALES
 - Reconocimiento corregido a Best Ads on TV.
 - Se preservaron todos los registros de proyectos, trayectoria y reconocimientos. Se añadieron 14 reconocimientos de 2026 en Premios Anda, FIAP, APAP y Effie Bolivia, conservando las entradas repetidas del listado proporcionado.
+- Añadidos tres casos de Behance: KFC - Lanzamiento de altura (2024), Indurama - Hogares Peruanos (2025) y Heinz - Iced Dip (2026). Imágenes locales optimizadas, secuencia de medios y videos Vimeo, incluida la pieza adicional de KFC con su portada propia. Los contadores y el sitemap se derivan de los doce proyectos.
+- Proyecto 9 corregido a MUVID // Film; añadido Effie Latam 2026 y reconocimientos ordenados por relevancia.
 - Texto de cliente, año, disciplina y descripción en cada caso. No se incluyeron roles personales ni resultados inventados.
 - HTML prerenderizado de portada, casos y 404; hidratación posterior en React. Los casos se pueden consultar sin JavaScript.
 - Title, descripción, canonical, Open Graph, Twitter y una imagen JPG social de 1200×630 propios para cada caso.

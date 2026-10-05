@@ -1,0 +1,75 @@
+{
+  "volkswagen": {
+    "source": "https://cdn.worldvectorlogo.com/logos/volkswagen-logo-2019.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "kfc": {
+    "source": "https://cdn.worldvectorlogo.com/logos/kfc-8.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "mcdonalds": {
+    "source": "https://cdn.worldvectorlogo.com/logos/mcdonald-s-black.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "cheetos": {
+    "source": "https://cdn.worldvectorlogo.com/logos/cheetos.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "heinz": {
+    "source": "https://cdn.worldvectorlogo.com/logos/heinz-logo-1.svg",
+    "presentation": "White HEINZ wordmark with EST. 1869, matching the supplied reference"
+  },
+  "xiaomi": {
+    "source": "https://cdn.worldvectorlogo.com/logos/xiaomi-3.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "bbva": {
+    "source": "https://cdn.worldvectorlogo.com/logos/bbva-2019.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "danone": {
+    "source": "https://cdn.worldvectorlogo.com/logos/danone-2.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "alcatel": {
+    "source": "https://cdn.worldvectorlogo.com/logos/alcatel-mobile-3.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "jumex": {
+    "source": "https://cdn.worldvectorlogo.com/logos/jumex.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "mercado-libre": {
+    "source": "https://cdn.worldvectorlogo.com/logos/mercadolibre.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "colgate-palmolive": {
+    "source": "https://cdn.worldvectorlogo.com/logos/colgate-palmolive-logo.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "indurama": {
+    "source": "https://epartner.vtexassets.com/arquivos/indurama-logo-new.png",
+    "website": "https://www.indurama.com/",
+    "presentation": "Original transparent logo, white through CSS filter"
+  },
+  "movistar": {
+    "source": "https://cdn.worldvectorlogo.com/logos/logo-movistar.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "kelloggs": {
+    "source": "https://cdn.worldvectorlogo.com/logos/kellogg-s-red.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "pringles": {
+    "source": "https://i.logos-download.com/5814/1291-b00be40c2a03a09c5e79aaf96646c6c2.svg/Pringles_Logo_2021.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "chevrolet": {
+    "source": "https://cdn.worldvectorlogo.com/logos/chevrolet-4.svg",
+    "presentation": "White monochrome logo on dark background"
+  },
+  "carrefour": {
+    "source": "https://cdn.worldvectorlogo.com/logos/carrefour-logo-1.svg",
+    "presentation": "White monochrome logo on dark background"
+  }
+}

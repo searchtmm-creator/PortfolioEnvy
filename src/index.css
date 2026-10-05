@@ -36,6 +36,74 @@ body {
   cursor: auto; /* Remains usable before hydration and without JavaScript. */
 }
 
+/* Campaign previews retain their colours on mobile and touch screens. */
+.project-cover-monochrome {
+  filter: grayscale(0);
+}
+
+@media (min-width: 768px) and (hover: hover) and (pointer: fine) {
+  .project-cover-monochrome {
+    filter: grayscale(1);
+  }
+
+  .group:hover .project-cover-monochrome,
+  .group:focus-visible .project-cover-monochrome {
+    filter: grayscale(0);
+  }
+}
+
+.project-card-shade {
+  height: 55%;
+  background: linear-gradient(to top, rgba(0, 0, 0, .82), rgba(0, 0, 0, .36) 38%, transparent);
+}
+
+.brand-section {
+  border-bottom: 1px solid var(--color-zinc-900);
+}
+
+.brand-logo-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  row-gap: 12px;
+}
+
+.brand-logo-cell {
+  width: 50%;
+  height: 112px;
+  padding: 20px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brand-logo {
+  display: block;
+  width: 100%;
+  max-width: 124px;
+  height: 48px;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+.brand-logo--symbol { max-width: 56px; height: 56px; }
+.brand-logo--compact { max-width: 88px; height: 60px; }
+.brand-logo--wide { max-width: 154px; }
+.brand-logo[src$=".png"] { filter: brightness(0) invert(1); }
+
+@media (min-width: 640px) {
+  .brand-logo-cell { width: 25%; height: 130px; padding: 24px; }
+}
+
+@media (min-width: 1024px) {
+  .brand-logo-cell { width: 25%; height: 128px; }
+  .brand-logo { max-width: 140px; height: 54px; }
+  .brand-logo--symbol { max-width: 64px; height: 64px; }
+  .brand-logo--compact { max-width: 100px; height: 68px; }
+  .brand-logo--wide { max-width: 170px; }
+}
+
 /* Custom selection styling */
 ::selection {
   background-color: #cefe46; /* Neon Yellow */

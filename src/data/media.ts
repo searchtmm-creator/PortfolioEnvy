@@ -62,6 +62,27 @@ import media51 from "../assets/wintv/wintv_6.webp";
 import media52 from "../assets/wintv/wintv_7.webp";
 import media53 from "../assets/wintv/wintv_8.webp";
 import media54 from "../assets/wintv/wintv_9.webp";
+import alturaCover from '../assets/kfc-lanzamiento-de-altura/cover.webp';
+import altura1 from '../assets/kfc-lanzamiento-de-altura/01.webp';
+import altura2 from '../assets/kfc-lanzamiento-de-altura/02.webp';
+import altura3 from '../assets/kfc-lanzamiento-de-altura/03.webp';
+import altura5 from '../assets/kfc-lanzamiento-de-altura/05.webp';
+import altura7 from '../assets/kfc-lanzamiento-de-altura/07.webp';
+import altura8 from '../assets/kfc-lanzamiento-de-altura/08.webp';
+import altura9 from '../assets/kfc-lanzamiento-de-altura/09.webp';
+import alturaContentPoster from '../assets/kfc-lanzamiento-de-altura/papas-fritas-poster.webp';
+import hogaresCover from '../assets/indurama-hogares-peruanos/cover.webp';
+import hogares1 from '../assets/indurama-hogares-peruanos/01.webp';
+import hogares2 from '../assets/indurama-hogares-peruanos/02.webp';
+import hogares3 from '../assets/indurama-hogares-peruanos/03.webp';
+import hogares4 from '../assets/indurama-hogares-peruanos/04.webp';
+import hogares5 from '../assets/indurama-hogares-peruanos/05.webp';
+import icedDip1 from '../assets/heinz-iced-dip/01.webp';
+import icedDip2 from '../assets/heinz-iced-dip/02.webp';
+import icedDip3 from '../assets/heinz-iced-dip/03.webp';
+import icedDip4 from '../assets/heinz-iced-dip/04.webp';
+import icedDip5 from '../assets/heinz-iced-dip/05.webp';
+import icedDip6 from '../assets/heinz-iced-dip/06.webp';
 export const mediaInfo: Record<string, { width: number; height: number; poster?: string }> = {
   [media0]: { width: 1400, height: 684 },
   [media1]: { width: 1400, height: 788 },
@@ -118,4 +139,25 @@ export const mediaInfo: Record<string, { width: number; height: number; poster?:
   [media52]: { width: 1400, height: 787 },
   [media53]: { width: 1400, height: 784 },
   [media54]: { width: 1400, height: 789 },
+  [alturaCover]: { width: 1600, height: 908 },
+  [altura1]: { width: 1600, height: 900 },
+  [altura2]: { width: 1600, height: 901 },
+  [altura3]: { width: 1400, height: 933 },
+  [altura5]: { width: 1400, height: 933 },
+  [altura7]: { width: 1400, height: 933 },
+  [altura8]: { width: 1400, height: 933 },
+  [altura9]: { width: 1400, height: 385 },
+  [alturaContentPoster]: { width: 3002, height: 1612 },
+  [hogaresCover]: { width: 1600, height: 1075 },
+  [hogares1]: { width: 1600, height: 1047 },
+  [hogares2]: { width: 1600, height: 1071 },
+  [hogares3]: { width: 1600, height: 1069 },
+  [hogares4]: { width: 1600, height: 1048 },
+  [hogares5]: { width: 1600, height: 1072 },
+  [icedDip1]: { width: 1600, height: 901 },
+  [icedDip2]: { width: 1600, height: 896 },
+  [icedDip3]: { width: 1600, height: 897 },
+  [icedDip4]: { width: 1600, height: 893 },
+  [icedDip5]: { width: 1600, height: 898 },
+  [icedDip6]: { width: 1400, height: 333 },
 };
