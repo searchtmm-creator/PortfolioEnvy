@@ -29,9 +29,10 @@ export function BrandLogos() {
         </div>
         <ul className="brand-logo-grid" aria-label="Selected brands">
           {brands.map(brand => (
-            <li key={brand.name} className="brand-logo-cell">
+            <li key={brand.name} className="brand-logo-cell" tabIndex={0}>
               <img src={`/brands/${brand.file}`} alt={brand.name} loading="lazy" decoding="async"
                 width={180} height={72} className={`brand-logo brand-logo--${brand.size || 'wordmark'}`} />
+              <span className="brand-logo-label" aria-hidden="true">{brand.name}</span>
             </li>
           ))}
         </ul>

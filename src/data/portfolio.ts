@@ -226,7 +226,11 @@ export const AWARDS_DATA: Festival[] = [
   {
     name: 'LIA Awards',
     location: 'GLOBAL',
-    entries: [{ year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' }],
+    entries: [
+      { year: '2026', result: 'Silver — TV & Cinema / On Negocios - Dino', tier: 'silver' },
+      { year: '2026', result: 'Bronze — TV & Cinema / On Negocios - Dino', tier: 'bronze' },
+      { year: '2019', result: 'Bronze — Radio & Audio / The Cheering Trophy', tier: 'bronze' },
+    ],
   },
   {
     name: 'One Show',
