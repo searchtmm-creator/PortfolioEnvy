@@ -255,6 +255,7 @@ export const AWARDS_DATA: Festival[] = [
     name: 'Ojo de Iberoamérica',
     location: 'LATAM',
     entries: [
+      { year: '2026', result: 'Silver — Producción Audiovisual / On Negocios - Dino', tier: 'silver' },
       { year: '2019', result: 'Silver — Ojo Sports / The Cheering Trophy', tier: 'silver' },
       { year: '2024', result: 'Bronze — Radio & Sound / Lo Fried Beats', tier: 'bronze' },
       { year: '2024', result: 'Bronze — Print / Sun Stats', tier: 'bronze' },
@@ -345,6 +346,7 @@ export const AWARDS_DATA: Festival[] = [
       { year: '2023', result: 'Bronze — Digital / Paranormal Activity', tier: 'bronze' },
       { year: '2023', result: 'Bronze — Craft / Fried on the map', tier: 'bronze' },
       { year: '2018', result: 'Bronze — Craft / Terrified Posters', tier: 'bronze' },
+      { year: '2026', result: 'Shortlist — Vía pública / KFC - KFEC', tier: 'shortlist' },
       { year: '2024', result: 'Shortlist — Radio / Lo Fried Beats', tier: 'shortlist' },
       { year: '2024', result: 'Shortlist — Print and Publishing / Open Late', tier: 'shortlist' },
       { year: '2024', result: 'Shortlist — Digital Craft / Nuggets Sound Test', tier: 'shortlist' },
@@ -369,7 +371,10 @@ export const AWARDS_DATA: Festival[] = [
   {
     name: 'Effie Bolivia',
     location: 'BOLIVIA',
-    entries: [{ year: '2026', result: 'Shortlist — Suministros Para el Hogar / Marsella - Nadie huele como tú', tier: 'shortlist' }],
+    entries: [
+      { year: '2026', result: 'Gold — Suministros para el Hogar / Marsella - Nadie huele como tú', tier: 'gold' },
+      { year: '2026', result: 'Shortlist — Suministros Para el Hogar / Marsella - Nadie huele como tú', tier: 'shortlist' },
+    ],
   },
   {
     name: 'Premios Anda',
@@ -408,6 +413,16 @@ export const AWARDS_DATA: Festival[] = [
     name: 'FEPI',
     location: 'LATAM',
     entries: [
+      { year: '2026', result: 'Gold — Audiovisual - Tecnología y Electrónica / On Negocios - Dino', tier: 'gold' },
+      { year: '2026', result: 'Gold — Audiovisual - Servicios Profesionales / On Negocios - Dino', tier: 'gold' },
+      { year: '2026', result: 'Gold — Audiovisual - Dirección de Arte / On Negocios - Dino', tier: 'gold' },
+      { year: '2026', result: 'Gold — Audiovisual - Tecnología y Electrónica / Win - Exorcista', tier: 'gold' },
+      { year: '2026', result: 'Gold — Audiovisual - Servicios Profesionales / Win - Exorcista', tier: 'gold' },
+      { year: '2026', result: 'Silver — Audiovisual - Comunicación de Marca / On Negocios - Dino', tier: 'silver' },
+      { year: '2026', result: 'Silver — Gráfica - Campaña de Producto / Indurama - Naturalmente Fresco', tier: 'silver' },
+      { year: '2026', result: 'Silver — Gráfica - Dirección de Arte / Indurama - Naturalmente Fresco', tier: 'silver' },
+      { year: '2026', result: 'Silver — Audiovisual - Comunicación de Marca / Win - Exorcista', tier: 'silver' },
+      { year: '2026', result: 'Bronze — Gráfica - Campaña de Marca / Indurama - Naturalmente Fresco', tier: 'bronze' },
       { year: '2024', result: 'Jury — Campañas integrales', tier: 'jury' },
       { year: '2022', result: 'Jury — Innovación en medios', tier: 'jury' },
     ],
